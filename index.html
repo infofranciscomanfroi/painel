@@ -49,7 +49,6 @@
         }
         .tela.ativa { opacity: 1; pointer-events: auto; }
 
-        /* ================= AJUSTE ROLAGEM AGENDA ================= */
         #lista {
             height: 70vh;
             overflow: hidden; 
@@ -62,7 +61,6 @@
             0% { transform: translateY(0); }
             100% { transform: translateY(-50%); } 
         }
-        /* ========================================================= */
 
         .evento { background: rgba(255,255,255,0.1); padding: 20px; margin-bottom: 15px; border-radius: 10px; }
         .titulo { font-size: 28px; font-weight: bold; }
@@ -93,7 +91,6 @@
 
         .oculto { opacity: 0 !important; pointer-events: none; }
 
-        /* ================= RELÓGIO ESPECIAL ================= */
         #relOpcional {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(200, 0, 0, 0.95);
@@ -106,32 +103,24 @@
         #relOpcionalConteudo { font-size: 180px; font-weight: bold; color: white; text-align: center; }
         @keyframes piscar {
             0% { background: rgba(180, 0, 0, 0.95); }
-            50% { background: rgba(230, 0, 0, 1); }
-            100% { background: rgba(180, 0, 0, 0.95); }
+            100% { background: rgba(230, 0, 0, 1); }
         }
 
-        /* ================= TELA PREVISÃO ================= */
         .container-previsao { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
-        
         .header-previsao { 
             display: flex; justify-content: space-between; align-items: center; 
             background: rgba(0,0,0,0.5); padding: 20px; border-radius: 20px; 
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
         }
-        
         .temp-principal { font-size: 90px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
         .temp-principal img { height: 120px; }
-        
         .temp-e-desc { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
-        
         #prevTemp { font-size: 90px; font-weight: bold; line-height: 1; }
-        
         .descricao-temp { 
             font-size: 30px; font-weight: normal; color: #ddd; 
             max-width: 350px; line-height: 1.2; text-transform: capitalize; 
             margin-top: -5px;
         }
-        
         .detalhes-clima { display: flex; gap: 30px; font-size: 22px; color: #ddd; }
         .detalhe-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .detalhe-valor { font-weight: bold; color: white; font-size: 28px; }
@@ -147,96 +136,20 @@
         .barra-temp { font-size: 18px; font-weight: bold; }
         .barra-label { font-size: 16px; color: #ddd; }
 
-        /* ================= TELA ANIVERSARIANTES (CORRIGIDO) ================= */
         .tela-aniversario {
             background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 50px;
-            position: relative;
-            overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 50px; position: relative; overflow: hidden;
         }
-        
-        .titulo-aniversario { 
-            font-size: 90px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-            margin-bottom: 30px;
-            z-index: 2;
-        }
-
+        .titulo-aniversario { font-size: 90px; font-weight: bold; color: #fff; text-shadow: 3px 3px 6px rgba(0,0,0,0.5); margin-bottom: 30px; z-index: 2; }
         .icone-bolo { font-size: 110px; margin-bottom: 10px; z-index: 2; }
-
-        .container-lista-aniversariantes {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 10px;
-            width: 100%;
-            z-index: 2;
-        }
-
-        .container-aniversariante {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 600px; /* Aumentado para nomes maiores */
-            margin-bottom: 20px;
-        }
-
-        .nome-aniversariante {
-            font-size: 55px; /* Tamanho ajustado para caber o nome completo */
-            font-weight: bold;
-            font-style: italic;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-            margin-bottom: 15px; 
-            order: 1; 
-            animation: piscarNome 1s infinite;
-            
-            /* Ajustes para nome completo estático */
-            white-space: nowrap; 
-            width: 100%;
-            text-align: center;
-        }
-
-        @keyframes piscarNome {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-
-        .foto-aniversariante {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%; 
-            object-fit: cover;
-            border: 10px solid white; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
-            order: 2; 
-        }
-
-        /* ================= EFEITO DE CONFETES ================= */
-        .confete {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background-color: #f00;
-            top: -20px;
-            z-index: 1;
-            animation: cairConfete 4s infinite linear;
-            opacity: 0.8;
-        }
-
-        @keyframes cairConfete {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
-        }
+        .container-lista-aniversariantes { display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; margin-top: 10px; width: 100%; z-index: 2; }
+        .container-aniversariante { display: flex; flex-direction: column; align-items: center; width: 600px; margin-bottom: 20px; }
+        .nome-aniversariante { font-size: 55px; font-weight: bold; font-style: italic; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-bottom: 15px; animation: piscarNome 1s infinite; white-space: nowrap; width: 100%; text-align: center; }
+        @keyframes piscarNome { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .foto-aniversariante { width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 10px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .confete { position: absolute; width: 15px; height: 15px; background-color: #f00; top: -20px; z-index: 1; animation: cairConfete 4s infinite linear; opacity: 0.8; }
+        @keyframes cairConfete { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
     </style>
 </head>
 
@@ -256,14 +169,11 @@
     </div>
 
     <div id="dataHora"></div>
-
     <div id="climaBox"><div id="clima">Carregando...</div></div>
 
     <div id="telaAgenda" class="tela ativa">
         <h1>AGENDAMENTOS DE HOJE</h1>
-        <div id="lista">
-            <div class="container-scroll" id="containerScroll"></div>
-        </div>
+        <div id="lista"><div class="container-scroll" id="containerScroll"></div></div>
     </div>
 
     <div id="telaAvisos" class="tela">
@@ -278,44 +188,22 @@
 
     <div id="telaPrevisao" class="tela">
         <h1>Previsão do tempo para amanhã em Lages - SC</h1>
-        
         <div class="container-previsao">
             <div class="header-previsao">
                 <div class="temp-principal">
                     <img id="prevIcone" src="" alt="">
                     <div class="temp-e-desc">
-                        <div>
-                            <span id="prevTemp">--</span>°C
-                        </div>
+                        <div><span id="prevTemp">--</span>°C</div>
                         <div id="prevDesc" class="descricao-temp"></div>
                     </div>
                 </div>
                 <div class="detalhes-clima">
-                    <div class="detalhe-item">
-                        <span>Máx/Mín</span>
-                        <span class="detalhe-valor"><span id="prevMax">--</span>°/<span id="prevMin">--</span>°</span>
-                    </div>
-                    <div class="detalhe-item">
-                        <span>Umidade</span>
-                        <span class="detalhe-valor"><span id="prevUmidade">--</span>%</span>
-                    </div>
-                    <div class="detalhe-item">
-                        <span>Vento</span>
-                        <span class="detalhe-valor"><span id="prevVento">--</span> km/h</span>
-                    </div>
+                    <div class="detalhe-item"><span>Máx/Mín</span><span class="detalhe-valor"><span id="prevMax">--</span>°/<span id="prevMin">--</span>°</span></div>
+                    <div class="detalhe-item"><span>Umidade</span><span class="detalhe-valor"><span id="prevUmidade">--</span>%</span></div>
+                    <div class="detalhe-item"><span>Vento</span><span class="detalhe-valor"><span id="prevVento">--</span> km/h</span></div>
                 </div>
             </div>
-
-            <div class="grafico-temp" id="graficoContainer">
-                </div>
-        </div>
-    </div>
-
-    <div id="telaAniversario" class="tela tela-aniversario">
-        <div class="icone-bolo">🎂</div>
-        <div class="titulo-aniversario">FELIZ ANIVERSÁRIO!</div>
-        <div id="listaAniversariantes" class="container-lista-aniversariantes">
-            <div style="font-size:40px">Carregando aniversariantes...</div>
+            <div class="grafico-temp" id="graficoContainer"></div>
         </div>
     </div>
 
@@ -323,296 +211,134 @@
         <div id="slideshow"></div>
     </div>
 
+    <div id="telaAniversario" class="tela tela-aniversario">
+        <div class="icone-bolo">🎂</div>
+        <div class="titulo-aniversario">FELIZ ANIVERSÁRIO!</div>
+        <div id="listaAniversariantes" class="container-lista-aniversariantes"></div>
+    </div>
+
 <script>
-// Configurações
 const BASE_URL = "https://script.google.com/macros/s/AKfycbzH8YkO4YOV-xx76siueEcdWYmy5BKT9TJSqPQvdRLHZjKZ9tlLMfHWNNJa5pDfYRqG/exec";
 const tempoImagem = 5000;
 const tempoSlideshowTotal = 20000;
+const tempoTelasNormais = 15000;
 
-// Variáveis de Estado
 let relogioVisivelDesde = null;
 let mostrandoRelogio = false;
-let slides = [];
-let slideIndex = 0;
 let slideTimeout;
-let videoStage = 0; // 0: Slides, 1: Vídeo, 2: Vídeo Terminou
 let intervaloTelas;
-
-// ORDEM DAS TELAS
-let telas = ["telaAgenda", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaAniversario"];
+let listaAniversariantesAtual = [];
 let telaAtual = 0;
-let listaAniversariantesAtual = []; // Variável para armazenar aniversariantes
+let telas = ["telaAgenda", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaAniversario"];
 
 const slidesContent = [
-  { tipo: "imagem", src: "https://i.postimg.cc/jdKsnrZL/Dia-da-Mulher-Mensagem-Floral-Dourado-Caneca-Panoramica.jpg" },
-  { tipo: "imagem", src: "https://i.postimg.cc/9FvYYJw7/06.jpg" }
+  { src: "https://i.postimg.cc/jdKsnrZL/Dia-da-Mulher-Mensagem-Floral-Dourado-Caneca-Panoramica.jpg" },
+  { src: "https://i.postimg.cc/9FvYYJw7/06.jpg" }
 ];
 
-/* ================= RELÓGIO ESPECIAL ================= */
-function verificarRelogioEspecial(){
-    const agora=new Date();
-    const h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds();
-    if(!mostrandoRelogio){
-        if((h===10&&m===0&&s===0)||(h===16&&m===0&&s===0)||(h===20&&m===0&&s===0)){
-            document.getElementById("relOpcional").classList.remove("oculto");
-            const som=document.getElementById("alarmeAudio");
-            som.currentTime=0;
-            som.play().catch(()=>{});
-            relogioVisivelDesde=new Date().getTime();
-            mostrandoRelogio=true;
-        }
-    }
-}
-
-function checarTempoRelogio(){
-    if(mostrandoRelogio&&relogioVisivelDesde){
-        if((new Date().getTime()-relogioVisivelDesde)/1000>=120){
-            document.getElementById("relOpcional").classList.add("oculto");
-            const som=document.getElementById("alarmeAudio");
-            som.pause(); som.currentTime=0;
-            mostrandoRelogio=false; relogioVisivelDesde=null;
-        }
-    }
-}
-
-setInterval(()=>{
-    verificarRelogioEspecial();
-    document.getElementById("relOpcionalConteudo").innerText = new Date().toLocaleTimeString('pt-BR');
-    checarTempoRelogio();
-},1000);
-
-/* ================= DATA E HORA ================= */
+/* ================= RELÓGIO E DATA ================= */
 function atualizarDataHora(){
     const agora = new Date();
     const data = agora.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-    const hora = agora.toLocaleTimeString('pt-BR');
-    document.getElementById("dataHora").innerHTML = data.charAt(0).toUpperCase()+data.slice(1) + "<br>" + hora;
+    document.getElementById("dataHora").innerHTML = data.charAt(0).toUpperCase()+data.slice(1) + "<br>" + agora.toLocaleTimeString('pt-BR');
 }
 setInterval(atualizarDataHora,1000);
-atualizarDataHora();
 
-/* ================= CLIMA ================= */
+/* ================= CARREGAMENTO DE DADOS ================= */
 function carregarClima(){
-    fetch(BASE_URL + "?tipo=clima")
-        .then(r=>r.json())
-        .then(data=>{
-            document.getElementById("clima").innerHTML =
-            `${data.temperatura}°C <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" style="height:60px; vertical-align:middle;"> ${data.descricao}`;
-        })
-        .catch(()=>{ document.getElementById("clima").innerHTML="Clima indisponível"; });
-}
-carregarClima();
-setInterval(carregarClima,600000);
-
-/* ================= PREVISÃO AMANHÃ ================= */
-function carregarPrevisaoAmanha(){
-    fetch(BASE_URL + "?tipo=previsaoAmanha")
-        .then(r=>r.json())
-        .then(data=>{
-            document.getElementById("prevTemp").innerText = data.temperatura;
-            document.getElementById("prevMax").innerText = data.maxima;
-            document.getElementById("prevMin").innerText = data.minima;
-            document.getElementById("prevUmidade").innerText = data.umidade;
-            document.getElementById("prevVento").innerText = data.vento;
-            document.getElementById("prevIcone").src = `https://openweathermap.org/img/wn/${data.icone}@4x.png`;
-            
-            const descElement = document.getElementById("prevDesc");
-            if (data.descricao && data.descricao !== "undefined") {
-                descElement.innerText = data.descricao;
-                descElement.style.display = "block";
-            } else {
-                descElement.style.display = "none";
-            }
-
-            const container = document.getElementById("graficoContainer");
-            container.innerHTML = "";
-            
-            if(data.grafico && data.grafico.length > 0){
-                const temps = data.grafico.map(p => p.temp);
-                const minTemp = Math.min(...temps);
-                const maxTemp = Math.max(...temps);
-                const range = maxTemp - minTemp;
-
-                data.grafico.forEach(ponto => {
-                    const altura = range === 0 ? 50 : ((ponto.temp - minTemp) / range) * 80 + 20;
-                    container.innerHTML += `
-                        <div class="barra-hora">
-                            <span class="barra-temp">${ponto.temp}°</span>
-                            <div class="barra" style="height: ${altura}px"></div>
-                            <span class="barra-label">${ponto.hora}h</span>
-                        </div>
-                    `;
-                });
-            }
-        })
-        .catch(e => { console.error(e); });
-}
-carregarPrevisaoAmanha();
-setInterval(carregarPrevisaoAmanha, 3600000);
-
-/* ================= AGENDA ================= */
-function carregarEventos(){
-    fetch(BASE_URL)
-    .then(r=>r.json())
-    .then(data=>{
-        let html="";
-        const hoje=new Date();
-        for(let i=1;i<data.length;i++){
-            let titulo=data[i][0];
-            let inicio=new Date(data[i][1]);
-            let fim=new Date(data[i][2]);
-            let descricao=data[i][3];
-
-            if(inicio.toDateString()===hoje.toDateString()){
-                let descricaoFormatada = descricao ? descricao.replace(/\n/g, '<br>') : "";
-                html+=`<div class="evento">
-                            <div class="titulo">${titulo}</div>
-                            <div class="horario">
-                                ${inicio.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} 
-                                - 
-                                ${fim.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-                            </div>
-                            <div class="descricao-evento">${descricaoFormatada}</div>
-                            </div>`;
-            }
-        }
-        
-        if(html === "") html = "<div class='evento'>Nenhum evento hoje</div>";
-        document.getElementById("containerScroll").innerHTML=html + html;
+    fetch(BASE_URL + "?tipo=clima").then(r=>r.json()).then(data=>{
+        document.getElementById("clima").innerHTML = `${data.temperatura}°C <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" style="height:60px; vertical-align:middle;"> ${data.descricao}`;
     });
 }
-carregarEventos();
-setInterval(carregarEventos,60000);
 
-/* ================= AVISOS ================= */
+function carregarPrevisaoAmanha(){
+    fetch(BASE_URL + "?tipo=previsaoAmanha").then(r=>r.json()).then(data=>{
+        document.getElementById("prevTemp").innerText = data.temperatura;
+        document.getElementById("prevMax").innerText = data.maxima;
+        document.getElementById("prevMin").innerText = data.minima;
+        document.getElementById("prevUmidade").innerText = data.umidade;
+        document.getElementById("prevVento").innerText = data.vento;
+        document.getElementById("prevIcone").src = `https://openweathermap.org/img/wn/${data.icone}@4x.png`;
+        document.getElementById("prevDesc").innerText = data.descricao || "";
+        const container = document.getElementById("graficoContainer");
+        container.innerHTML = "";
+        if(data.grafico){
+            const temps = data.grafico.map(p => p.temp), minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT;
+            data.grafico.forEach(p => {
+                const alt = range === 0 ? 50 : ((p.temp - minT) / range) * 80 + 20;
+                container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span class="barra-label">${p.hora}h</span></div>`;
+            });
+        }
+    });
+}
+
+function carregarEventos(){
+    fetch(BASE_URL).then(r=>r.json()).then(data=>{
+        let html=""; const hoje=new Date().toDateString();
+        for(let i=1;i<data.length;i++){
+            if(new Date(data[i][1]).toDateString() === hoje) {
+                html+=`<div class="evento"><div class="titulo">${data[i][0]}</div><div class="horario">${new Date(data[i][1]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${new Date(data[i][2]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div class="descricao-evento">${(data[i][3]||"").replace(/\n/g,'<br>')}</div></div>`;
+            }
+        }
+        document.getElementById("containerScroll").innerHTML=(html||"<div class='evento'>Nenhum evento hoje</div>") + html;
+    });
+}
+
 function carregarAvisos(){
-    fetch(BASE_URL + "?tipo=avisos")
-        .then(r=>r.json())
-        .then(data=>{
-            let html="", hoje=new Date(); hoje.setHours(0,0,0,0);
-            for(let i=1;i<data.length;i++){
-                let titulo=data[i][0], msg=data[i][1];
-                let inicio=new Date(data[i][2]), fim=new Date(data[i][3]);
-                inicio.setHours(0,0,0,0); fim.setHours(23,59,59,999);
-                if(hoje>=inicio && hoje<=fim){
-                    html+=`<div class="aviso"><strong>${titulo}</strong><br>${msg}</div>`;
-                }
-            }
-            if(html==="") html="<div class='aviso'>Nenhum aviso ativo</div>";
-            document.getElementById("avisos").innerHTML=html;
-        });
+    fetch(BASE_URL + "?tipo=avisos").then(r=>r.json()).then(data=>{
+        let html="", hoje=new Date(); hoje.setHours(0,0,0,0);
+        for(let i=1;i<data.length;i++){
+            let ini=new Date(data[i][2]), fim=new Date(data[i][3]);
+            if(hoje>=ini && hoje<=fim) html+=`<div class="aviso"><strong>${data[i][0]}</strong><br>${data[i][1]}</div>`;
+        }
+        document.getElementById("avisos").innerHTML=html || "<div class='aviso'>Nenhum aviso ativo</div>";
+    });
 }
 
-/* ================= DICAS ================= */
 function carregarDicas(){
-    fetch(BASE_URL + "?tipo=dicas")
-        .then(r => r.json())
-        .then(data => {
-            let html = "";
-            for (let i = 1; i < data.length; i++) {
-                let titulo = data[i][0];
-                let texto = data[i][1];
-                if (titulo || texto) {
-                    html += `<div class="dica">`;
-                    if (titulo) html += `<strong>${titulo}</strong><br>`;
-                    if (texto) html += `${texto}`;
-                    html += `</div>`;
-                }
-            }
-            if (html === "") html = "<div class='dica'>Nenhuma dica disponível</div>";
-            document.getElementById("conteudoDicas").innerHTML = html;
-        });
+    fetch(BASE_URL + "?tipo=dicas").then(r => r.json()).then(data => {
+        let html = "";
+        for (let i = 1; i < data.length; i++) html += `<div class="dica"><strong>${data[i][0]||""}</strong><br>${data[i][1]||""}</div>`;
+        document.getElementById("conteudoDicas").innerHTML = html || "<div class='dica'>Nenhuma dica disponível</div>";
+    });
 }
 
-/* ================= ANIVERSARIANTES ================= */
-function buscarDadosAniversariantes() {
-    fetch(BASE_URL + "?tipo=aniversariantes")
-        .then(r => r.json())
-        .then(lista => {
-            listaAniversariantesAtual = lista; // Atualiza a variável global
-            const container = document.getElementById("listaAniversariantes");
-            const tela = document.getElementById("telaAniversario");
-            
-            document.querySelectorAll('.confete').forEach(el => el.remove());
-
-            if (lista.length > 0) {
-                for(let i = 0; i < 60; i++) {
-                    const confete = document.createElement('div');
-                    confete.className = 'confete';
-                    confete.style.left = Math.random() * 100 + 'vw';
-                    confete.style.animationDelay = Math.random() * 3 + 's';
-                    confete.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                    tela.appendChild(confete);
-                }
-
-                container.innerHTML = "";
-                lista.forEach(pessoa => {
-                    container.innerHTML += `
-                        <div class="container-aniversariante">
-                            <div class="nome-aniversariante">${pessoa.nome}</div>
-                            <img src="${pessoa.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'">
-                        </div>
-                    `;
-                });
-            } else {
-                container.innerHTML = "<div style='font-size:40px; margin-top:50px;'>Nenhum aniversariante hoje!</div>";
+function buscarAniversariantes() {
+    fetch(BASE_URL + "?tipo=aniversariantes").then(r => r.json()).then(lista => {
+        listaAniversariantesAtual = lista;
+        const container = document.getElementById("listaAniversariantes");
+        container.innerHTML = "";
+        document.querySelectorAll('.confete').forEach(el => el.remove());
+        if (lista.length > 0) {
+            lista.forEach(p => {
+                container.innerHTML += `<div class="container-aniversariante"><div class="nome-aniversariante">${p.nome}</div><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"></div>`;
+            });
+            for(let i=0; i<50; i++){
+                const c = document.createElement('div'); c.className='confete'; c.style.left=Math.random()*100+'vw'; c.style.animationDelay=Math.random()*3+'s'; c.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
+                document.getElementById("telaAniversario").appendChild(c);
             }
-        })
-        .catch(e => {
-            console.error(e);
-            document.getElementById("listaAniversariantes").innerHTML = "<div style='font-size:40px; margin-top:50px;'>Erro ao carregar dados.</div>";
-        });
+        }
+    });
 }
 
-/* ================= MÍDIA ================= */
+/* ================= SLIDESHOW ================= */
 function iniciarSlideshow(){
     const container = document.getElementById("slideshow");
     container.innerHTML = "";
-    slideIndex = 0;
-    slidesContent.forEach(item => {
+    slidesContent.forEach((item, idx) => {
         let div = document.createElement("div");
-        div.className = "slide";
+        div.className = "slide" + (idx === 0 ? " ativo" : "");
         div.style.backgroundImage = `url(${item.src})`;
         container.appendChild(div);
     });
-    slides = document.querySelectorAll(".slide");
-    if(slides.length > 0) {
-        slides[0].classList.add("ativo");
-        executarSlide();
-    }
-}
-function executarSlide(){
-    if (slideTimeout) clearTimeout(slideTimeout);
-    slideTimeout = setTimeout(proximoSlide, tempoImagem);
-}
-function proximoSlide(){
-    if (slideTimeout) clearTimeout(slideTimeout);
-    if (videoStage !== 0) return;
-    slides[slideIndex].classList.remove("ativo");
-    slideIndex = (slideIndex + 1) % slides.length;
-    slides[slideIndex].classList.add("ativo");
-    executarSlide();
-}
-function tocarVideoSeparado() {
-    const container = document.getElementById("slideshow");
-    container.innerHTML = "";
-    const video = document.createElement("video");
-    video.src = "https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/videoinclusao.mp4";
-    video.muted = true;
-    video.playsInline = true;
-    video.style.width = "100%";
-    video.style.height = "100%";
-    video.style.objectFit = "cover";
-    container.appendChild(video);
-    video.onended = function() {
-        container.innerHTML = ""; 
-        videoStage = 2;
-        trocarTela();
-    };
-    video.play().catch(e => {
-        console.error("Autoplay bloqueado", e);
-        setTimeout(trocarTela, 5000);
-    });
+    let sIdx = 0;
+    const slides = document.querySelectorAll(".slide");
+    if(slideTimeout) clearInterval(slideTimeout);
+    slideTimeout = setInterval(() => {
+        slides[sIdx].classList.remove("ativo");
+        sIdx = (sIdx + 1) % slides.length;
+        slides[sIdx].classList.add("ativo");
+    }, tempoImagem);
 }
 
 /* ================= TROCA DE TELAS ================= */
@@ -621,54 +347,50 @@ function trocarTela() {
     telas.forEach(id => document.getElementById(id).classList.remove("ativa"));
 
     let idAtual = telas[telaAtual];
-    let elementoAtual = document.getElementById(idAtual);
 
-    // LÓGICA PARA PULAR TELA DE ANIVERSÁRIO
-    if (idAtual === "telaAniversario") {
-        if (listaAniversariantesAtual.length === 0) {
-            // Pula para a próxima tela se não houver aniversariantes
-            telaAtual = (telaAtual + 1) % telas.length;
-            trocarTela();
-            return; // Encerra a execução desta chamada
-        }
+    if (idAtual === "telaAniversario" && listaAniversariantesAtual.length === 0) {
+        telaAtual = (telaAtual + 1) % telas.length;
+        trocarTela(); return;
     }
 
-    if (elementoAtual) elementoAtual.classList.add("ativa");
+    document.getElementById(idAtual).classList.add("ativa");
     
-    document.getElementById("topoEsquerdo").classList.remove("oculto");
-    document.getElementById("climaBox").classList.remove("oculto");
-    document.getElementById("dataHora").classList.remove("oculto");
+    const ocultarFixos = idAtual === "telaAniversario" || idAtual === "telaMidia";
+    document.getElementById("topoEsquerdo").classList.toggle("oculto", ocultarFixos);
+    document.getElementById("climaBox").classList.toggle("oculto", ocultarFixos);
+    document.getElementById("dataHora").classList.toggle("oculto", ocultarFixos);
 
-    if (idAtual === "telaAniversario") {
-        // A busca já foi feita, apenas exibimos
-        videoStage = 0; 
-        intervaloTelas = setInterval(trocarTela, 15000);
-        document.getElementById("topoEsquerdo").classList.add("oculto");
-        document.getElementById("climaBox").classList.add("oculto");
-        document.getElementById("dataHora").classList.add("oculto");
-    } else if (idAtual === "telaMidia") {
-        document.getElementById("topoEsquerdo").classList.add("oculto");
-        document.getElementById("climaBox").classList.add("oculto");
-        document.getElementById("dataHora").classList.add("oculto");
-        if (videoStage === 0) {
-            iniciarSlideshow();
-            setTimeout(() => { videoStage = 1; tocarVideoSeparado(); }, tempoSlideshowTotal);
-        } else if (videoStage === 2) {
-            telaAtual = (telaAtual + 1) % telas.length;
-            trocarTela();
-        }
+    if (idAtual === "telaMidia") {
+        iniciarSlideshow();
+        intervaloTelas = setInterval(trocarTela, tempoSlideshowTotal);
     } else {
-        intervaloTelas = setInterval(trocarTela, 15000);
+        if(slideTimeout) clearInterval(slideTimeout);
+        intervaloTelas = setInterval(trocarTela, tempoTelasNormais);
     }
     
     telaAtual = (telaAtual + 1) % telas.length;
 }
 
-// Inicia
-carregarAvisos();
-carregarDicas();
-buscarDadosAniversariantes(); // Busca antes de iniciar a troca
+// Relógio Especial
+setInterval(()=>{
+    const agora=new Date(), h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds();
+    if(!mostrandoRelogio && ((h===10||h===16||h===20)&&m===0&&s===0)){
+        document.getElementById("relOpcional").classList.remove("oculto");
+        document.getElementById("alarmeAudio").play().catch(()=>{});
+        relogioVisivelDesde=new Date().getTime(); mostrandoRelogio=true;
+    }
+    if(mostrandoRelogio && (new Date().getTime()-relogioVisivelDesde)/1000>=120){
+        document.getElementById("relOpcional").classList.add("oculto");
+        document.getElementById("alarmeAudio").pause(); mostrandoRelogio=false;
+    }
+    document.getElementById("relOpcionalConteudo").innerText = new Date().toLocaleTimeString('pt-BR');
+},1000);
+
+// Início
+carregarClima(); carregarPrevisaoAmanha(); carregarEventos(); carregarAvisos(); carregarDicas(); buscarAniversariantes();
+atualizarDataHora(); 
 trocarTela();
+setInterval(buscarAniversariantes, 3600000);
 </script>
 </body>
 </html>
