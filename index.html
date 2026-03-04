@@ -49,6 +49,15 @@
         }
         .tela.ativa { opacity: 1; pointer-events: auto; }
 
+        /* ================= AJUSTE REFINADO TELA DE AVISOS ================= */
+        #telaAvisos { 
+            padding-top: 380px; /* Equilíbrio entre o ajuste anterior e o atual */
+        } 
+        #avisos { 
+            margin-top: 50px;    /* Espaço harmônico entre título e área amarela */
+        }
+        /* =================================================================== */
+
         #lista {
             height: 70vh;
             overflow: hidden; 
@@ -236,7 +245,6 @@ const slidesContent = [
   { src: "https://i.postimg.cc/9FvYYJw7/06.jpg" }
 ];
 
-/* ================= RELÓGIO E DATA ================= */
 function atualizarDataHora(){
     const agora = new Date();
     const data = agora.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
@@ -244,7 +252,6 @@ function atualizarDataHora(){
 }
 setInterval(atualizarDataHora,1000);
 
-/* ================= CARREGAMENTO DE DADOS ================= */
 function carregarClima(){
     fetch(BASE_URL + "?tipo=clima").then(r=>r.json()).then(data=>{
         document.getElementById("clima").innerHTML = `${data.temperatura}°C <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" style="height:60px; vertical-align:middle;"> ${data.descricao}`;
@@ -321,7 +328,6 @@ function buscarAniversariantes() {
     });
 }
 
-/* ================= SLIDESHOW ================= */
 function iniciarSlideshow(){
     const container = document.getElementById("slideshow");
     container.innerHTML = "";
@@ -341,25 +347,19 @@ function iniciarSlideshow(){
     }, tempoImagem);
 }
 
-/* ================= TROCA DE TELAS ================= */
 function trocarTela() {
     if(intervaloTelas) clearInterval(intervaloTelas);
     telas.forEach(id => document.getElementById(id).classList.remove("ativa"));
-
     let idAtual = telas[telaAtual];
-
     if (idAtual === "telaAniversario" && listaAniversariantesAtual.length === 0) {
         telaAtual = (telaAtual + 1) % telas.length;
         trocarTela(); return;
     }
-
     document.getElementById(idAtual).classList.add("ativa");
-    
     const ocultarFixos = idAtual === "telaAniversario" || idAtual === "telaMidia";
     document.getElementById("topoEsquerdo").classList.toggle("oculto", ocultarFixos);
     document.getElementById("climaBox").classList.toggle("oculto", ocultarFixos);
     document.getElementById("dataHora").classList.toggle("oculto", ocultarFixos);
-
     if (idAtual === "telaMidia") {
         iniciarSlideshow();
         intervaloTelas = setInterval(trocarTela, tempoSlideshowTotal);
@@ -367,11 +367,9 @@ function trocarTela() {
         if(slideTimeout) clearInterval(slideTimeout);
         intervaloTelas = setInterval(trocarTela, tempoTelasNormais);
     }
-    
     telaAtual = (telaAtual + 1) % telas.length;
 }
 
-// Relógio Especial
 setInterval(()=>{
     const agora=new Date(), h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds();
     if(!mostrandoRelogio && ((h===10||h===16||h===20)&&m===0&&s===0)){
@@ -386,10 +384,8 @@ setInterval(()=>{
     document.getElementById("relOpcionalConteudo").innerText = new Date().toLocaleTimeString('pt-BR');
 },1000);
 
-// Início
 carregarClima(); carregarPrevisaoAmanha(); carregarEventos(); carregarAvisos(); carregarDicas(); buscarAniversariantes();
-atualizarDataHora(); 
-trocarTela();
+atualizarDataHora(); trocarTela();
 setInterval(buscarAniversariantes, 3600000);
 </script>
 </body>
