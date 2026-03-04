@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Painel Escolar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0; padding: 0; height: 100vh; width: 100vw;
@@ -12,6 +13,41 @@
         }
         html { height: 100%; width: 100%; }
 
+        /* --- ANIMAÇÕES --- */
+        @keyframes flutuar {
+            0% { transform: translateY(0px); text-shadow: 0 0 10px rgba(0,255,204,0.3); }
+            50% { transform: translateY(-20px); text-shadow: 0 0 40px rgba(0,255,204,0.8); }
+            100% { transform: translateY(0px); text-shadow: 0 0 10px rgba(0,255,204,0.3); }
+        }
+        @keyframes entradaLogo {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- TELA DE BOAS-VINDAS ATUALIZADA --- */
+        .tela-boas-vindas {
+            display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
+            text-align: center; background: radial-gradient(circle, #203a43 0%, #0f2027 100%);
+            padding-top: 100px !important; /* Move o conteúdo para cima */
+        }
+        .boas-vindas-texto {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 90px; /* Aumentado */
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            animation: flutuar 4s ease-in-out infinite;
+            color: #00ffcc;
+            text-transform: uppercase;
+        }
+        .boas-vindas-logo {
+            height: 550px; /* Logo maior */
+            width: auto;
+            animation: entradaLogo 2s ease-out;
+            filter: drop-shadow(0 0 30px rgba(0,255,204,0.4));
+        }
+
+        /* --- ELEMENTOS FIXOS --- */
         #topoEsquerdo {
             position: absolute; top: 30px; left: 60px;
             display: flex; align-items: center; gap: 20px; z-index: 10;
@@ -30,12 +66,9 @@
         #climaBox {
             position: absolute; top: 100px; right: 60px;
             background: rgba(0, 0, 0, 0.75);
-            padding: 25px 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-            z-index: 10;
-            transition: opacity 0.5s;
+            padding: 25px 40px; border-radius: 20px;
+            backdrop-filter: blur(12px); box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+            z-index: 10; transition: opacity 0.5s;
         }
         #clima { font-size: 48px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
 
@@ -44,89 +77,75 @@
             width: 100%; height: 100%;
             padding: 280px 80px 60px 80px;
             box-sizing: border-box; opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 1s ease-in-out;
             pointer-events: none;
         }
         .tela.ativa { opacity: 1; pointer-events: auto; }
 
-        #telaAvisos { padding-top: 380px; } 
-        #avisos { margin-top: 50px; }
-
+        /* --- AGENDAMENTOS (RESTAURADO) --- */
         #lista { height: 70vh; overflow: hidden; position: relative; }
         .container-scroll { animation: rolagemVertical 30s linear infinite; }
         @keyframes rolagemVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-
+        
         .evento { background: rgba(255,255,255,0.1); padding: 20px; margin-bottom: 15px; border-radius: 10px; }
         .titulo { font-size: 28px; font-weight: bold; }
         .horario { font-size: 22px; color: #00ffcc; }
         .descricao-evento { font-size: 18px; color: #ccc; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; line-height: 1.3; }
-        
-        .aviso { background: #ffcc00; color: black; padding: 30px; margin-bottom: 20px; border-radius: 12px; font-size: 60px; font-weight: bold; line-height: 1.3; }
 
-        /* ================= TELA DE DICAS (MODO SLIDESHOW 10s) ================= */
-        #conteudoDicas {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
+        /* --- PREVISÃO DO TEMPO --- */
+        .container-previsao { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .header-previsao { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(0,0,0,0.5); padding: 20px; border-radius: 20px; 
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
         }
+        .temp-principal { font-size: 90px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
+        .temp-e-desc { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+        .descricao-temp { font-size: 30px; font-weight: normal; color: #ddd; text-transform: capitalize; }
+        .detalhes-clima { display: flex; gap: 30px; font-size: 22px; color: #ddd; }
+        .detalhe-valor { font-weight: bold; color: white; font-size: 28px; }
+
+        .grafico-temp { 
+            background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; 
+            height: 150px; display: flex; justify-content: space-around; 
+            align-items: flex-end; backdrop-filter: blur(10px);
+            margin-top: 5px;
+        }
+        .barra-hora { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
+        .barra { width: 40px; background: #00ffcc; border-radius: 10px 10px 0 0; transition: height 0.5s; }
+        .barra-temp { font-size: 18px; font-weight: bold; }
+        .barra-label { font-size: 16px; color: #ddd; }
+
+        /* --- AVISOS --- */
+        #telaAvisos { padding-top: 380px; } 
+        .aviso { background: #ffcc00; color: black; padding: 30px; border-radius: 12px; font-size: 60px; font-weight: bold; }
+
+        /* --- DICAS --- */
+        #conteudoDicas { display: flex; justify-content: center; align-items: center; height: 100%; }
         .dica-item {
-            background: rgba(0, 128, 255, 0.15); 
-            padding: 60px;
-            border-radius: 25px; 
-            font-size: 48px; 
-            line-height: 1.4;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            display: none; 
-            animation: fadeIn 0.8s ease-in-out;
+            background: rgba(0, 128, 255, 0.15); padding: 60px; border-radius: 25px; 
+            font-size: 48px; line-height: 1.4; width: 90%; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); display: none; animation: entradaLogo 0.8s ease-in-out;
         }
         .dica-item.ativa { display: block; }
-        .dica-item strong {
-            font-size: 60px;
-            color: #00ffcc;
-            display: block;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .dica-item strong { font-size: 60px; color: #00ffcc; display: block; margin-bottom: 25px; text-transform: uppercase; }
 
-        #slideshow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+        /* --- SLIDESHOW --- */
+        #slideshow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
         .slide.ativo { opacity: 1; }
 
         .oculto { opacity: 0 !important; pointer-events: none; }
 
+        /* --- ALARME --- */
         #relOpcional { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(200, 0, 0, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; animation: piscar 1s infinite alternate ease-in-out; }
         #relOpcionalTexto { font-size: 100px; font-weight: bold; color: white; margin-bottom: 20px; text-shadow: 4px 4px 10px black; }
-        #relOpcionalConteudo { font-size: 180px; font-weight: bold; color: white; text-align: center; }
+        #relOpcionalConteudo { font-size: 180px; font-weight: bold; color: white; }
         @keyframes piscar { 0% { background: rgba(180, 0, 0, 0.95); } 100% { background: rgba(230, 0, 0, 1); } }
 
-        .container-previsao { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
-        .header-previsao { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .temp-principal { font-size: 90px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
-        .temp-principal img { height: 120px; }
-        .temp-e-desc { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
-        #prevTemp { font-size: 90px; font-weight: bold; line-height: 1; }
-        .descricao-temp { font-size: 30px; font-weight: normal; color: #ddd; max-width: 350px; line-height: 1.2; text-transform: capitalize; margin-top: -5px; }
-        .detalhes-clima { display: flex; gap: 30px; font-size: 22px; color: #ddd; }
-        .detalhe-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-        .detalhe-valor { font-weight: bold; color: white; font-size: 28px; }
-        .grafico-temp { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; height: 150px; display: flex; justify-content: space-around; align-items: flex-end; backdrop-filter: blur(10px); margin-top: 5px; }
-        .barra-hora { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
-        .barra { width: 40px; background: #00ffcc; border-radius: 10px 10px 0 0; transition: height 0.5s; }
-        .barra-temp { font-size: 18px; font-weight: bold; }
-        .barra-label { font-size: 16px; color: #ddd; }
-        .tela-aniversario { background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 50px; position: relative; overflow: hidden; }
-        .titulo-aniversario { font-size: 90px; font-weight: bold; color: #fff; text-shadow: 3px 3px 6px rgba(0,0,0,0.5); margin-bottom: 30px; z-index: 2; }
-        .icone-bolo { font-size: 110px; margin-bottom: 10px; z-index: 2; }
-        .container-lista-aniversariantes { display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; margin-top: 10px; width: 100%; z-index: 2; }
-        .container-aniversariante { display: flex; flex-direction: column; align-items: center; width: 600px; margin-bottom: 20px; }
-        .nome-aniversariante { font-size: 55px; font-weight: bold; font-style: italic; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-bottom: 15px; animation: piscarNome 1s infinite; white-space: nowrap; width: 100%; text-align: center; }
-        .foto-aniversariante { width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 10px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .confete { position: absolute; width: 15px; height: 15px; background-color: #f00; top: -20px; z-index: 1; animation: cairConfete 4s infinite linear; opacity: 0.8; }
-        @keyframes cairConfete { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+        .tela-aniversario { background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .nome-aniversariante { font-size: 55px; font-weight: bold; color: #fff; animation: piscarNome 1s infinite; }
+        .foto-aniversariante { width: 250px; height: 250px; border-radius: 50%; border: 10px solid white; }
     </style>
 </head>
 
@@ -141,23 +160,37 @@
         <img src="https://i.ibb.co/Wvvft9tN/C-pia-de-Logo-escola.png" id="logoEscola">
         <div id="nomeEscola">EEB FRANCISCO MANFROI</div>
     </div>
-
     <div id="dataHora"></div>
     <div id="climaBox"><div id="clima">Carregando...</div></div>
 
-    <div id="telaAgenda" class="tela ativa"><h1>AGENDAMENTOS DE HOJE</h1><div id="lista"><div class="container-scroll" id="containerScroll"></div></div></div>
+    <div id="telaBoasVindas" class="tela tela-boas-vindas ativa">
+        <div class="boas-vindas-texto">Seja muito bem-vindo à</div>
+        <img src="https://i.ibb.co/Wvvft9tN/C-pia-de-Logo-escola.png" class="boas-vindas-logo">
+    </div>
+
+    <div id="telaAgenda" class="tela"><h1>AGENDAMENTOS DE HOJE</h1><div id="lista"><div class="container-scroll" id="containerScroll"></div></div></div>
     <div id="telaAvisos" class="tela"><h1>AVISOS IMPORTANTES</h1><div id="avisos"></div></div>
     <div id="telaDicas" class="tela"><h1>DICAS EDUCACIONAIS</h1><div id="conteudoDicas"></div></div>
-    <div id="telaPrevisao" class="tela"><h1>Previsão do tempo para amanhã em Lages - SC</h1><div class="container-previsao" id="previsaoBox"></div></div>
+    
+    <div id="telaPrevisao" class="tela">
+        <h1>Previsão do tempo para amanhã em Lages - SC</h1>
+        <div class="container-previsao" id="previsaoBox"></div>
+    </div>
+
     <div id="telaMidia" class="tela"><div id="slideshow"></div></div>
-    <div id="telaAniversario" class="tela tela-aniversario"><div class="icone-bolo">🎂</div><div class="titulo-aniversario">FELIZ ANIVERSÁRIO!</div><div id="listaAniversariantes" class="container-lista-aniversariantes"></div></div>
+    
+    <div id="telaAniversario" class="tela tela-aniversario">
+        <div style="font-size: 110px;">🎂</div>
+        <h1 style="font-size: 90px;">FELIZ ANIVERSÁRIO!</h1>
+        <div id="listaAniversariantes" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;"></div>
+    </div>
 
 <script>
 const BASE_URL = "https://script.google.com/macros/s/AKfycbzH8YkO4YOV-xx76siueEcdWYmy5BKT9TJSqPQvdRLHZjKZ9tlLMfHWNNJa5pDfYRqG/exec";
-const tempoDicaIndividual = 10000; // Reduzido para 10 segundos
+const tempoDicaIndividual = 10000;
 const tempoImagem = 5000;
 const tempoSlideshowTotal = 20000;
-const tempoTelasNormais = 15000;
+const tempoTelasNormais = 10000;
 
 let listaDicas = [];
 let dicaAtualIdx = 0;
@@ -166,7 +199,7 @@ let slideTimeout;
 let intervaloTelas;
 let listaAniversariantesAtual = [];
 let telaAtual = 0;
-let telas = ["telaAgenda", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaAniversario"];
+let telas = ["telaBoasVindas", "telaAgenda", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaAniversario"];
 
 const slidesContent = [
   { src: "https://i.postimg.cc/jdKsnrZL/Dia-da-Mulher-Mensagem-Floral-Dourado-Caneca-Panoramica.jpg" },
@@ -177,25 +210,33 @@ function atualizarTudo() {
     carregarClima(); carregarPrevisaoAmanha(); carregarEventos(); carregarAvisos(); carregarDicas(); buscarAniversariantes();
 }
 
+function carregarEventos(){ 
+    fetch(BASE_URL).then(r=>r.json()).then(data=>{ 
+        let html=""; 
+        const hoje=new Date().toDateString(); 
+        for(let i=1;i<data.length;i++){ 
+            if(new Date(data[i][1]).toDateString() === hoje) { 
+                html+=`<div class="evento">
+                    <div class="titulo">${data[i][0]}</div>
+                    <div class="horario">${new Date(data[i][1]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${new Date(data[i][2]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+                    <div class="descricao-evento">${(data[i][3]||"").replace(/\n/g,'<br>')}</div>
+                </div>`; 
+            } 
+        } 
+        document.getElementById("containerScroll").innerHTML=(html||"<div class='evento'>Nenhum evento agendado para hoje</div>") + html; 
+    }); 
+}
+
 function carregarDicas(){
-    fetch(BASE_URL + "?tipo=dicas").then(r => r.json()).then(data => {
-        listaDicas = data.slice(1);
-        renderizarDica();
-    }).catch(e => console.error(e));
+    fetch(BASE_URL + "?tipo=dicas").then(r => r.json()).then(data => { listaDicas = data.slice(1); renderizarDica(); }).catch(e => console.error(e));
 }
 
 function renderizarDica() {
     const container = document.getElementById("conteudoDicas");
-    if (listaDicas.length === 0) {
-        container.innerHTML = "<div class='dica-item ativa'>Nenhuma dica disponível</div>";
-        return;
-    }
+    if (listaDicas.length === 0) { container.innerHTML = "<div class='dica-item ativa'>Nenhuma dica disponível</div>"; return; }
     let html = "";
-    listaDicas.forEach((d, idx) => {
-        html += `<div class="dica-item" id="dica_${idx}"><strong>${d[0]||""}</strong>${d[1]||""}</div>`;
-    });
+    listaDicas.forEach((d, idx) => { html += `<div class="dica-item" id="dica_${idx}"><strong>${d[0]||""}</strong>${d[1]||""}</div>`; });
     container.innerHTML = html;
-    mostrarProximaDica();
 }
 
 function mostrarProximaDica() {
@@ -205,10 +246,45 @@ function mostrarProximaDica() {
     dicaAtualIdx = (dicaAtualIdx + 1) % listaDicas.length;
 }
 
+function carregarPrevisaoAmanha(){ 
+    fetch(BASE_URL + "?tipo=previsaoAmanha").then(r=>r.json()).then(data=>{ 
+        let html = `
+            <div class="header-previsao">
+                <div class="temp-principal">
+                    <img src="https://openweathermap.org/img/wn/${data.icone}@4x.png" style="height:120px">
+                    <div class="temp-e-desc">
+                        <div>${data.temperatura}°C</div>
+                        <div class="descricao-temp">${data.descricao}</div>
+                    </div>
+                </div>
+                <div class="detalhes-clima">
+                    <div>Máx/Mín<br><span class="detalhe-valor">${data.maxima}°/${data.minima}°</span></div>
+                    <div>Umidade<br><span class="detalhe-valor">${data.umidade}%</span></div>
+                    <div>Vento<br><span class="detalhe-valor">${data.vento} km/h</span></div>
+                </div>
+            </div>
+            <div class="grafico-temp" id="graficoContainer"></div>`;
+        document.getElementById("previsaoBox").innerHTML = html;
+        
+        if(data.grafico){
+            const gc = document.getElementById("graficoContainer");
+            const temps = data.grafico.map(p => p.temp), minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT;
+            data.grafico.forEach(p => {
+                const alt = range === 0 ? 50 : ((p.temp - minT) / range) * 80 + 20;
+                gc.innerHTML += `
+                    <div class="barra-hora">
+                        <span class="barra-temp">${p.temp}°</span>
+                        <div class="barra" style="height:${alt}px"></div>
+                        <span class="barra-label">${p.hora}h</span>
+                    </div>`;
+            });
+        }
+    }); 
+}
+
 function trocarTela() {
     if(intervaloTelas) clearInterval(intervaloTelas);
     if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
-
     if (telaAtual === 0) { atualizarTudo(); }
 
     telas.forEach(id => document.getElementById(id).classList.remove("ativa"));
@@ -223,8 +299,7 @@ function trocarTela() {
 
     if (idAtual === "telaDicas") {
         dicaAtualIdx = 0;
-        renderizarDica();
-        // A tela dura o tempo total de dicas (10s por dica) ou o tempo mínimo normal
+        mostrarProximaDica();
         let tempoTotalDicas = Math.max(tempoTelasNormais, listaDicas.length * tempoDicaIndividual);
         intervaloDicasInterno = setInterval(mostrarProximaDica, tempoDicaIndividual);
         intervaloTelas = setInterval(trocarTela, tempoTotalDicas);
@@ -237,7 +312,7 @@ function trocarTela() {
         intervaloTelas = setInterval(trocarTela, tempoTelasNormais);
     }
 
-    const ocultarFixos = idAtual === "telaAniversario" || idAtual === "telaMidia";
+    const ocultarFixos = idAtual === "telaAniversario" || idAtual === "telaMidia" || idAtual === "telaBoasVindas";
     document.getElementById("topoEsquerdo").classList.toggle("oculto", ocultarFixos);
     document.getElementById("climaBox").classList.toggle("oculto", ocultarFixos);
     document.getElementById("dataHora").classList.toggle("oculto", ocultarFixos);
@@ -248,15 +323,14 @@ function trocarTela() {
 function atualizarDataHora(){ const agora = new Date(); const data = agora.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); document.getElementById("dataHora").innerHTML = data.charAt(0).toUpperCase()+data.slice(1) + "<br>" + agora.toLocaleTimeString('pt-BR'); }
 setInterval(atualizarDataHora,1000);
 function carregarClima(){ fetch(BASE_URL + "?tipo=clima").then(r=>r.json()).then(data=>{ document.getElementById("clima").innerHTML = `${data.temperatura}°C <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" style="height:60px; vertical-align:middle;"> ${data.descricao}`; }); }
-function carregarPrevisaoAmanha(){ fetch(BASE_URL + "?tipo=previsaoAmanha").then(r=>r.json()).then(data=>{ let html = `<div class="header-previsao"><div class="temp-principal"><img src="https://openweathermap.org/img/wn/${data.icone}@4x.png" alt=""><div class="temp-e-desc"><div>${data.temperatura}°C</div><div class="descricao-temp">${data.descricao}</div></div></div><div class="detalhes-clima"><div class="detalhe-item"><span>Máx/Mín</span><span class="detalhe-valor">${data.maxima}°/${data.minima}°</span></div><div class="detalhe-item"><span>Umidade</span><span class="detalhe-valor">${data.umidade}%</span></div><div class="detalhe-item"><span>Vento</span><span class="detalhe-valor">${data.vento} km/h</span></div></div></div><div class="grafico-temp" id="graficoContainer"></div>`; document.getElementById("previsaoBox").innerHTML = html; if(data.grafico){ const container = document.getElementById("graficoContainer"); const temps = data.grafico.map(p => p.temp), minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT; data.grafico.forEach(p => { const alt = range === 0 ? 50 : ((p.temp - minT) / range) * 80 + 20; container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span class="barra-label">${p.hora}h</span></div>`; }); } }); }
-function carregarEventos(){ fetch(BASE_URL).then(r=>r.json()).then(data=>{ let html=""; const hoje=new Date().toDateString(); for(let i=1;i<data.length;i++){ if(new Date(data[i][1]).toDateString() === hoje) { html+=`<div class="evento"><div class="titulo">${data[i][0]}</div><div class="horario">${new Date(data[i][1]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${new Date(data[i][2]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div class="descricao-evento">${(data[i][3]||"").replace(/\n/g,'<br>')}</div></div>`; } } document.getElementById("containerScroll").innerHTML=(html||"<div class='evento'>Nenhum evento hoje</div>") + html; }); }
-function carregarAvisos(){ fetch(BASE_URL + "?tipo=avisos").then(r=>r.json()).then(data=>{ let html="", hoje=new Date(); hoje.setHours(0,0,0,0); for(let i=1;i<data.length;i++){ let ini=new Date(data[i][2]), fim=new Date(data[i][3]); if(hoje>=ini && hoje<=fim) html+=`<div class="aviso"><strong>${data[i][0]}</strong><br>${data[i][1]}</div>`; } document.getElementById("avisos").innerHTML=html || "<div class='aviso'>Nenhum aviso ativo</div>"; }); }
-function buscarAniversariantes() { fetch(BASE_URL + "?tipo=aniversariantes").then(r => r.json()).then(lista => { listaAniversariantesAtual = lista; const container = document.getElementById("listaAniversariantes"); container.innerHTML = ""; document.querySelectorAll('.confete').forEach(el => el.remove()); if (lista.length > 0) { lista.forEach(p => { container.innerHTML += `<div class="container-aniversariante"><div class="nome-aniversariante">${p.nome}</div><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"></div>`; }); for(let i=0; i<50; i++){ const c = document.createElement('div'); c.className='confete'; c.style.left=Math.random()*100+'vw'; c.style.animationDelay=Math.random()*3+'s'; c.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`; document.getElementById("telaAniversario").appendChild(c); } } }); }
+function carregarAvisos(){ fetch(BASE_URL + "?tipo=avisos").then(r=>r.json()).then(data=>{ let html="", hoje=new Date(); hoje.setHours(0,0,0,0); for(let i=1;i<data.length;i++){ let ini=new Date(data[i][2]), fim=new Date(data[i][3]); if(hoje>=ini && hoje<=fim) html+=`<div class="aviso"><strong>${data[i][0]}</strong><br>${data[i][1]}</div>`; } document.getElementById("avisos").innerHTML=html || "Sem avisos"; }); }
+function buscarAniversariantes() { fetch(BASE_URL + "?tipo=aniversariantes").then(r => r.json()).then(lista => { listaAniversariantesAtual = lista; const container = document.getElementById("listaAniversariantes"); container.innerHTML = ""; if (lista.length > 0) { lista.forEach(p => { container.innerHTML += `<div style="text-align:center"><div class="nome-aniversariante">${p.nome}</div><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"></div>`; }); } }); }
 function iniciarSlideshow(){ const container = document.getElementById("slideshow"); container.innerHTML = ""; slidesContent.forEach((item, idx) => { let div = document.createElement("div"); div.className = "slide" + (idx === 0 ? " ativo" : ""); div.style.backgroundImage = `url(${item.src})`; container.appendChild(div); }); let sIdx = 0; const slides = document.querySelectorAll(".slide"); if(slideTimeout) clearInterval(slideTimeout); slideTimeout = setInterval(() => { if(slides[sIdx]) slides[sIdx].classList.remove("ativo"); sIdx = (sIdx + 1) % slides.length; if(slides[sIdx]) slides[sIdx].classList.add("ativo"); }, tempoImagem); }
 
-setInterval(()=>{ const agora=new Date(), h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds(); if(((h===10||h===16||h===20)&&m===0&&s===0)){ document.getElementById("relOpcional").classList.remove("oculto"); document.getElementById("alarmeAudio").play().catch(()=>{}); setTimeout(()=> { document.getElementById("relOpcional").classList.add("oculto"); document.getElementById("alarmeAudio").pause(); }, 120000); } document.getElementById("relOpcionalConteudo").innerText = new Date().toLocaleTimeString('pt-BR'); },1000);
+setInterval(()=>{ const agora=new Date(), h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds(); if((h===10||h===16||h===20)&&m===0&&s===0){ document.getElementById("relOpcional").classList.remove("oculto"); document.getElementById("alarmeAudio").play().catch(()=>{}); setTimeout(()=> { document.getElementById("relOpcional").classList.add("oculto"); document.getElementById("alarmeAudio").pause(); }, 120000); } document.getElementById("relOpcionalConteudo").innerText = agora.toLocaleTimeString('pt-BR'); },1000);
 
-atualizarTudo(); atualizarDataHora(); trocarTela();
+atualizarTudo();
+trocarTela();
 </script>
 </body>
 </html>
