@@ -339,7 +339,7 @@ setInterval(()=>{
         const alarme = document.getElementById("alarmeAudio");
         alarme.volume = 1.0; 
         alarme.play().catch(e => {}); 
-        setTimeout(() => { alarme.pause(); alarme.currentTime = 0; }, 60000);
+        setTimeout(() => { alarme.pause(); alarme.currentTime = 0; }, 30000);
         setTimeout(()=> { document.getElementById("relOpcional").classList.add("oculto"); }, 120000); 
     } 
     document.getElementById("relOpcionalConteudo").innerText = agora.toLocaleTimeString('pt-BR'); 
@@ -354,3 +354,4 @@ atualizarTudo(); trocarTela();
 </script>
 </body>
 </html>
+
