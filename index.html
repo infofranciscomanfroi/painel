@@ -25,8 +25,6 @@
         }
         @keyframes piscar { 0% { background: rgba(180, 0, 0, 0.95); } 100% { background: rgba(230, 0, 0, 1); } }
         @keyframes piscarNome { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        
-        /* Ajuste: Rolagem mais lenta (45s em vez de 30s) */
         @keyframes rolagemVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* --- TELA DE BOAS-VINDAS --- */
@@ -94,10 +92,8 @@
         }
         .temp-principal { font-size: 90px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
         .descricao-temp { font-size: 30px; font-weight: normal; color: #ddd; text-transform: capitalize; }
-        
         .detalhes-clima { display: flex; gap: 40px; text-align: center; }
         .detalhe-valor { font-weight: bold; color: white; font-size: 28px; }
-
         .grafico-temp { 
             background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; 
             height: 150px; display: flex; justify-content: space-around; 
@@ -125,6 +121,7 @@
         .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
         .slide.ativo { opacity: 1; }
 
+        /* --- TELA ANIVERSÁRIO (AJUSTADA) --- */
         .tela-aniversario { 
             background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); 
             display: flex; 
@@ -132,10 +129,17 @@
             justify-content: flex-start !important; 
             align-items: center; 
             position: relative; 
-            padding-top: 80px !important; 
+            padding: 20px 0 0 0 !important; /* Subiu o conteúdo reduzindo o padding */
         }
-        .nome-aniversariante { font-size: 55px; font-weight: bold; color: #fff; animation: piscarNome 1s infinite; }
-        .foto-aniversariante { width: 300px; height: 300px; border-radius: 50%; border: 10px solid white; position: relative; z-index: 2; margin-top: 10px; }
+        .tela-aniversario h1 {
+            font-size: 90px; 
+            z-index: 2; 
+            margin: 0;
+            width: 100%;
+            text-align: center; /* Centraliza o texto "Feliz Aniversário" */
+        }
+        .nome-aniversariante { font-size: 55px; font-weight: bold; color: #fff; animation: piscarNome 1s infinite; margin-top: 10px; }
+        .foto-aniversariante { width: 350px; height: 350px; border-radius: 50%; border: 10px solid white; position: relative; z-index: 2; margin-top: 5px; object-fit: cover; }
         #confettiCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
         .oculto { opacity: 0 !important; pointer-events: none; }
@@ -183,9 +187,9 @@
     
     <div id="telaAniversario" class="tela tela-aniversario">
         <canvas id="confettiCanvas"></canvas>
-        <div style="font-size: 110px; z-index: 2; margin-bottom: 10px;">🎂</div>
-        <h1 style="font-size: 90px; z-index: 2; margin: 0;">FELIZ ANIVERSÁRIO!</h1>
-        <div id="listaAniversariantes" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; z-index: 2; margin-top: 20px;"></div>
+        <div style="font-size: 100px; z-index: 2; margin-bottom: 0px;">🎂</div>
+        <h1>FELIZ ANIVERSÁRIO!</h1>
+        <div id="listaAniversariantes" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; z-index: 2; margin-top: 10px;"></div>
     </div>
 
 <script>
@@ -199,12 +203,12 @@ let listaDicas = [];
 let dicaAtualIdx = 0;
 let intervaloDicasInterno, slideTimeout, intervaloTelas;
 let listaAniversariantesAtual = [];
-let qtdEventosHoje = 0; // Variável para controlar tempo da agenda
+let qtdEventosHoje = 0; 
 let telaAtual = 0;
 let telas = ["telaBoasVindas", "telaAgenda", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaAniversario"];
 
 const slidesContent = [
-  { src: "https://i.postimg.cc/jdKsnrZL/Dia-da-Mulher-Mensagem-Floral-Dourado-Caneca-Panoramica.jpg" },
+  { src: "https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/diadaescola1.jpg" },
   { src: "https://i.postimg.cc/9FvYYJw7/06.jpg" }
 ];
 
@@ -225,7 +229,6 @@ function carregarEventos(){
             } 
         } 
         qtdEventosHoje = contador;
-        // Duplicamos o HTML para criar o efeito de scroll infinito fluido
         document.getElementById("containerScroll").innerHTML=(html||"<div class='evento'>Nenhum evento agendado para hoje</div>") + (contador > 0 ? html : ""); 
     }); 
 }
@@ -265,8 +268,6 @@ function trocarTela() {
         intervaloDicasInterno = setInterval(mostrarProximaDica, tempoDicaIndividual);
         intervaloTelas = setInterval(trocarTela, tempoTotalDicas);
     } else if (idAtual === "telaAgenda") {
-        // Lógica: Se houver mais de 3 eventos, aumenta o tempo para permitir a leitura de todos.
-        // Calculamos 8 segundos por evento, com um mínimo de 15 segundos.
         let tempoAgenda = Math.max(15000, qtdEventosHoje * 8000);
         intervaloTelas = setInterval(trocarTela, tempoAgenda);
     } else if (idAtual === "telaMidia") {
@@ -287,7 +288,10 @@ setInterval(atualizarDataHora,1000);
 
 function carregarClima(){ fetch(BASE_URL + "?tipo=clima").then(r=>r.json()).then(data=>{ document.getElementById("clima").innerHTML = `${data.temperatura}°C <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" style="height:60px; vertical-align:middle;"> ${data.descricao}`; }); }
 function carregarAvisos(){ fetch(BASE_URL + "?tipo=avisos").then(r=>r.json()).then(data=>{ let html="", hoje=new Date(); hoje.setHours(0,0,0,0); for(let i=1;i<data.length;i++){ let ini=new Date(data[i][2]), fim=new Date(data[i][3]); if(hoje>=ini && hoje<=fim) html+=`<div class="aviso"><strong>${data[i][0]}</strong><br>${data[i][1]}</div>`; } document.getElementById("avisos").innerHTML=html || "Sem avisos"; }); }
-function buscarAniversariantes() { fetch(BASE_URL + "?tipo=aniversariantes").then(r => r.json()).then(lista => { listaAniversariantesAtual = lista; const container = document.getElementById("listaAniversariantes"); container.innerHTML = ""; if (lista.length > 0) { lista.forEach(p => { container.innerHTML += `<div style="text-align:center"><div class="nome-aniversariante">${p.nome}</div><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"></div>`; }); } }); }
+function buscarAniversariantes() { fetch(BASE_URL + "?tipo=aniversariantes").then(r => r.json()).then(lista => { listaAniversariantesAtual = lista; const container = document.getElementById("listaAniversariantes"); container.innerHTML = ""; if (lista.length > 0) { lista.forEach(p => { 
+    // Ordem invertida: Primeiro Foto, Depois Nome
+    container.innerHTML += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><div class="nome-aniversariante">${p.nome}</div></div>`; 
+}); } }); }
 function iniciarSlideshow(){ const container = document.getElementById("slideshow"); container.innerHTML = ""; slidesContent.forEach((item, idx) => { let div = document.createElement("div"); div.className = "slide" + (idx === 0 ? " ativo" : ""); div.style.backgroundImage = `url(${item.src})`; container.appendChild(div); }); let sIdx = 0; const slides = document.querySelectorAll(".slide"); if(slideTimeout) clearInterval(slideTimeout); slideTimeout = setInterval(() => { if(slides[sIdx]) slides[sIdx].classList.remove("ativo"); sIdx = (sIdx + 1) % slides.length; if(slides[sIdx]) slides[sIdx].classList.add("ativo"); }, tempoImagem); }
 
 function dispararConfetes() {
@@ -354,6 +358,3 @@ atualizarTudo(); trocarTela();
 </script>
 </body>
 </html>
-
-
-
