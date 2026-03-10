@@ -121,7 +121,7 @@
         .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
         .slide.ativo { opacity: 1; }
 
-        /* --- TELA ANIVERSÁRIO (AJUSTADA) --- */
+        /* --- TELA ANIVERSÁRIO --- */
         .tela-aniversario { 
             background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); 
             display: flex; 
@@ -129,14 +129,14 @@
             justify-content: flex-start !important; 
             align-items: center; 
             position: relative; 
-            padding: 20px 0 0 0 !important; /* Subiu o conteúdo reduzindo o padding */
+            padding: 20px 0 0 0 !important; 
         }
         .tela-aniversario h1 {
             font-size: 90px; 
             z-index: 2; 
             margin: 0;
             width: 100%;
-            text-align: center; /* Centraliza o texto "Feliz Aniversário" */
+            text-align: center;
         }
         .nome-aniversariante { font-size: 55px; font-weight: bold; color: #fff; animation: piscarNome 1s infinite; margin-top: 10px; }
         .foto-aniversariante { width: 350px; height: 350px; border-radius: 50%; border: 10px solid white; position: relative; z-index: 2; margin-top: 5px; object-fit: cover; }
@@ -246,6 +246,13 @@ function carregarPrevisaoAmanha(){
 }
 
 function trocarTela() {
+    // SEGURANÇA: Se a pausa estiver ativa, aborta qualquer tentativa de trocar tela
+    if (!document.getElementById("relOpcional").classList.contains("oculto")) {
+        if(intervaloTelas) clearInterval(intervaloTelas);
+        if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
+        return;
+    }
+
     if(intervaloTelas) clearInterval(intervaloTelas);
     if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
     if (telaAtual === 0) { atualizarTudo(); }
@@ -289,7 +296,6 @@ setInterval(atualizarDataHora,1000);
 function carregarClima(){ fetch(BASE_URL + "?tipo=clima").then(r=>r.json()).then(data=>{ document.getElementById("clima").innerHTML = `${data.temperatura}°C <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" style="height:60px; vertical-align:middle;"> ${data.descricao}`; }); }
 function carregarAvisos(){ fetch(BASE_URL + "?tipo=avisos").then(r=>r.json()).then(data=>{ let html="", hoje=new Date(); hoje.setHours(0,0,0,0); for(let i=1;i<data.length;i++){ let ini=new Date(data[i][2]), fim=new Date(data[i][3]); if(hoje>=ini && hoje<=fim) html+=`<div class="aviso"><strong>${data[i][0]}</strong><br>${data[i][1]}</div>`; } document.getElementById("avisos").innerHTML=html || "Sem avisos"; }); }
 function buscarAniversariantes() { fetch(BASE_URL + "?tipo=aniversariantes").then(r => r.json()).then(lista => { listaAniversariantesAtual = lista; const container = document.getElementById("listaAniversariantes"); container.innerHTML = ""; if (lista.length > 0) { lista.forEach(p => { 
-    // Ordem invertida: Primeiro Foto, Depois Nome
     container.innerHTML += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><div class="nome-aniversariante">${p.nome}</div></div>`; 
 }); } }); }
 function iniciarSlideshow(){ const container = document.getElementById("slideshow"); container.innerHTML = ""; slidesContent.forEach((item, idx) => { let div = document.createElement("div"); div.className = "slide" + (idx === 0 ? " ativo" : ""); div.style.backgroundImage = `url(${item.src})`; container.appendChild(div); }); let sIdx = 0; const slides = document.querySelectorAll(".slide"); if(slideTimeout) clearInterval(slideTimeout); slideTimeout = setInterval(() => { if(slides[sIdx]) slides[sIdx].classList.remove("ativo"); sIdx = (sIdx + 1) % slides.length; if(slides[sIdx]) slides[sIdx].classList.add("ativo"); }, tempoImagem); }
@@ -331,6 +337,7 @@ function dispararConfetes() {
     draw();
 }
 
+// LÓGICA DE PAUSA (REESTRUTURADA PARA PARAR TUDO)
 setInterval(()=>{ 
     const agora=new Date(), h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds(); 
     const horários = [
@@ -338,13 +345,26 @@ setInterval(()=>{
         {h: 15, m: 30}, {h: 16, m: 0}, {h: 20, m: 0}
     ];
     const éHoraDePausa = horários.some(tempo => tempo.h === h && tempo.m === m);
+    
     if(éHoraDePausa && s === 0){ 
+        // PARADA TOTAL: Mata todos os intervalos de troca de tela e dicas imediatamente
+        if(intervaloTelas) clearInterval(intervaloTelas);
+        if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
+        if(slideTimeout) clearInterval(slideTimeout);
+
         document.getElementById("relOpcional").classList.remove("oculto"); 
         const alarme = document.getElementById("alarmeAudio");
         alarme.volume = 1.0; 
         alarme.play().catch(e => {}); 
+        
         setTimeout(() => { alarme.pause(); alarme.currentTime = 0; }, 30000);
-        setTimeout(()=> { document.getElementById("relOpcional").classList.add("oculto"); }, 300000); 
+
+        // Ao final da pausa, esconde a tela e REINICIA o painel pela tela de Boas-Vindas
+        setTimeout(()=> { 
+            document.getElementById("relOpcional").classList.add("oculto");
+            telaAtual = 0; // Garante que volta do início
+            trocarTela(); 
+        }, 300000); 
     } 
     document.getElementById("relOpcionalConteudo").innerText = agora.toLocaleTimeString('pt-BR'); 
 },1000);
