@@ -160,7 +160,8 @@
     <div id="relOpcional" class="oculto">
         <div id="relOpcionalTexto">PAUSA FINALIZADA</div>
         <div id="relOpcionalConteudo"></div>
-        <audio id="alarmeAudio" preload="auto" loop><source src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3" type="audio/mpeg"></audio>
+        <audio id="alarmeAudio" preload="auto"><source src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3" type="audio/mpeg"></audio>
+        <audio id="musicaAudio" preload="auto"><source src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/Audio-pausa-finalizada.mp3" type="audio/mpeg"></audio>
     </div>
 
     <div id="topoEsquerdo">
@@ -246,7 +247,6 @@ function carregarPrevisaoAmanha(){
 }
 
 function trocarTela() {
-    // SEGURANÇA: Se a pausa estiver ativa, aborta qualquer tentativa de trocar tela
     if (!document.getElementById("relOpcional").classList.contains("oculto")) {
         if(intervaloTelas) clearInterval(intervaloTelas);
         if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
@@ -307,7 +307,6 @@ function dispararConfetes() {
     canvas.height = window.innerHeight;
     let particles = [];
     const colors = ['#f44336','#e91e63','#9c27b0','#673ab7','#3f51b5','#2196f3','#03a9f4','#00bcd4','#009688','#4caf50','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff5722'];
-
     for (let i = 0; i < 150; i++) {
         particles.push({
             x: Math.random() * canvas.width,
@@ -318,7 +317,6 @@ function dispararConfetes() {
             angle: Math.random() * 6.28
         });
     }
-
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles.forEach(p => {
@@ -337,7 +335,11 @@ function dispararConfetes() {
     draw();
 }
 
-// LÓGICA DE PAUSA (REESTRUTURADA PARA PARAR TUDO)
+// LÓGICA DE PAUSA COM DOIS ÁUDIOS
+let execucoesMusica = 0;
+const limiteExecucoes = 4; // Quantas vezes a música vai tocar
+const intervaloEntreMusicas = 30000; // Tempo de silêncio (30 segundos)
+
 setInterval(()=>{ 
     const agora=new Date(), h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds(); 
     const horários = [
@@ -347,22 +349,51 @@ setInterval(()=>{
     const éHoraDePausa = horários.some(tempo => tempo.h === h && tempo.m === m);
     
     if(éHoraDePausa && s === 0){ 
-        // PARADA TOTAL: Mata todos os intervalos de troca de tela e dicas imediatamente
+        // PARADA DE TELAS
         if(intervaloTelas) clearInterval(intervaloTelas);
         if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
         if(slideTimeout) clearInterval(slideTimeout);
 
         document.getElementById("relOpcional").classList.remove("oculto"); 
-        const alarme = document.getElementById("alarmeAudio");
-        alarme.volume = 1.0; 
-        alarme.play().catch(e => {}); 
         
-        setTimeout(() => { alarme.pause(); alarme.currentTime = 0; }, 30000);
+        const sirene = document.getElementById("alarmeAudio");
+        const musica = document.getElementById("musicaAudio");
 
-        // Ao final da pausa, esconde a tela e REINICIA o painel pela tela de Boas-Vindas
+        execucoesMusica = 0; // Reseta o contador
+        sirene.volume = 1.0; 
+        sirene.play().catch(e => {}); 
+        
+        // FUNÇÃO PARA TOCAR A MÚSICA COM INTERVALO
+        sirene.onended = function() {
+            tocarMusicaComPausa();
+        };
+
+        function tocarMusicaComPausa() {
+            // Verifica se ainda estamos na tela vermelha e se não excedeu 3 vezes
+            if (!document.getElementById("relOpcional").classList.contains("oculto") && execucoesMusica < limiteExecucoes) {
+                musica.volume = 0.7;
+                musica.play().catch(e => {});
+                execucoesMusica++;
+
+                // Quando a música terminar, espera o intervalo e tenta tocar de novo
+                musica.onended = function() {
+                    if (execucoesMusica < limiteExecucoes) {
+                        setTimeout(tocarMusicaComPausa, intervaloEntreMusicas);
+                    }
+                };
+            }
+        }
+
+        // Finaliza a pausa após 5 minutos
         setTimeout(()=> { 
             document.getElementById("relOpcional").classList.add("oculto");
-            telaAtual = 0; // Garante que volta do início
+            sirene.pause();
+            musica.pause();
+            sirene.currentTime = 0;
+            musica.currentTime = 0;
+            sirene.onended = null; // Limpa os eventos
+            musica.onended = null;
+            telaAtual = 0;
             trocarTela(); 
         }, 300000); 
     } 
@@ -370,8 +401,10 @@ setInterval(()=>{
 },1000);
 
 document.addEventListener('click', () => {
-    const alarme = document.getElementById("alarmeAudio");
-    alarme.play().then(() => { alarme.pause(); alarme.currentTime = 0; }).catch(()=>{});
+    const sirene = document.getElementById("alarmeAudio");
+    const musica = document.getElementById("musicaAudio");
+    sirene.play().then(() => { sirene.pause(); sirene.currentTime = 0; }).catch(()=>{});
+    musica.play().then(() => { musica.pause(); musica.currentTime = 0; }).catch(()=>{});
 }, { once: true });
 
 atualizarTudo(); trocarTela();
