@@ -49,6 +49,7 @@
 
     /* === CABEÇALHOS === */
     .section-header { margin: 320px 60px 40px; display: flex; align-items: center; gap: 20px; }
+    .section-header.descido { margin-top: 400px; } /* Classe aplicada apenas nas telas solicitadas */
     .bar { width: 8px; height: 45px; background: #ffffff; border-radius: 4px; }
     h1 { font-size: 40px; text-transform: uppercase; font-weight: 900; color: #ffffff; letter-spacing: 2px; }
 
@@ -160,7 +161,7 @@
 </div>
 
 <div id="telaAgenda" class="tela">
-  <div class="section-header"><div class="bar"></div><h1>Agendamentos de Hoje</h1></div>
+  <div class="section-header descido"><div class="bar"></div><h1>Agendamentos de Hoje</h1></div>
   <div id="containerScroll"></div>
 </div>
 
@@ -171,7 +172,7 @@
 </div>
 
 <div id="telaAvisos" class="tela">
-  <div class="section-header"><div class="bar"></div><h1>Avisos Importantes</h1></div>
+  <div class="section-header descido"><div class="bar"></div><h1>Avisos Importantes</h1></div>
   <div id="avisos" style="padding:0 50px;"></div>
 </div>
 
@@ -188,7 +189,7 @@
 <div id="telaMidia" class="tela"><div id="slideshow"></div></div>
 
 <div id="telaNoticias" class="tela">
-  <div class="section-header"><div class="bar"></div><h1>Notícias de Santa Catarina</h1></div>
+  <div class="section-header descido"><div class="bar"></div><h1>Notícias de Santa Catarina</h1></div>
   <div id="containerNoticias"></div>
 </div>
 
@@ -197,7 +198,7 @@ const BASE_URL = "https://script.google.com/macros/s/AKfycbzH8YkO4YOV-xx76siueEc
 const RSS_URL = "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/dynamo/sc/santa-catarina/rss2.xml";
 const SLIDES = ["https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/pascoa-manfroi.jpg", "https://i.postimg.cc/9FvYYJw7/06.jpg"];
 
-// NOVA ORDEM DAS TELAS CONFORME SOLICITADO
+// ORDEM DAS TELAS
 const TELAS = ["telaBoasVindas", "telaAgenda", "telaAniversario", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaNoticias"];
 
 let telaAtual = 0, listaAgenda = [], agendaPagina = 0, listaDicas = [], dicaIdx = 0, listaAniv = [], slideIdx = 0, listaNoticias = [], noticiaPagina = 0;
