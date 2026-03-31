@@ -1,413 +1,413 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Painel Escolar - EEB Francisco Manfroi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0; padding: 0; height: 100vh; width: 100vw;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            background-attachment: fixed; background-size: cover;
-            color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
-        }
-        html { height: 100%; width: 100%; }
+  <meta charset="UTF-8">
+  <title>Painel Escolar - EEB Francisco Manfroi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET E BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; color: white; }
 
-        /* --- ANIMAÇÕES --- */
-        @keyframes flutuar {
-            0% { transform: translateY(0px); text-shadow: 0 0 10px rgba(0,255,204,0.3); }
-            50% { transform: translateY(-20px); text-shadow: 0 0 40px rgba(0,255,204,0.8); }
-            100% { transform: translateY(0px); text-shadow: 0 0 10px rgba(0,255,204,0.3); }
-        }
-        @keyframes entradaLogo {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes piscar { 0% { background: rgba(180, 0, 0, 0.95); } 100% { background: rgba(230, 0, 0, 1); } }
-        @keyframes piscarNome { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        @keyframes rolagemVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+    body {
+      background: linear-gradient(180deg, #060d1f 0%, #0c1a40 25%, #1a0d45 55%, #2d0a5c 80%, #1a0438 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        /* --- TELA DE BOAS-VINDAS --- */
-        .tela-boas-vindas {
-            display: none; flex-direction: column; justify-content: flex-start; align-items: center;
-            text-align: center; background: radial-gradient(circle, #203a43 0%, #0f2027 100%);
-            padding-top: 100px !important;
-        }
-        .boas-vindas-texto {
-            font-family: 'Montserrat', sans-serif; font-size: 90px; font-weight: 900;
-            letter-spacing: -2px; margin-bottom: 20px; animation: flutuar 4s ease-in-out infinite;
-            color: #00ffcc; text-transform: uppercase;
-        }
-        .boas-vindas-logo {
-            height: 550px; width: auto; animation: entradaLogo 2s ease-out;
-            filter: drop-shadow(0 0 30px rgba(0,255,204,0.4));
-        }
+    .tela {
+      position: absolute; inset: 0; opacity: 0; pointer-events: none;
+      transition: opacity 1s ease-in-out; display: flex; flex-direction: column;
+    }
+    .tela.ativa { opacity: 1; pointer-events: auto; }
 
-        /* --- ELEMENTOS FIXOS --- */
-        #topoEsquerdo {
-            position: absolute; top: 30px; left: 60px;
-            display: flex; align-items: center; gap: 20px; z-index: 10;
-            transition: opacity 0.5s;
-        }
-        #logoEscola { height: 220px; }
-        #nomeEscola { font-size: 60px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-
-        #dataHora {
-            position: absolute; top: 30px; right: 60px;
-            font-size: 22px; font-weight: bold; text-align: right; line-height: 1.4; z-index: 10;
-            transition: opacity 0.5s;
-        }
-
-        #climaBox {
-            position: absolute; top: 100px; right: 60px;
-            background: rgba(0, 0, 0, 0.75); padding: 25px 40px; border-radius: 20px;
-            backdrop-filter: blur(12px); box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-            z-index: 10; transition: opacity 0.5s;
-        }
-        #clima { font-size: 48px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
-
-        .tela {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 280px 80px 60px 80px; box-sizing: border-box; opacity: 0;
-            transition: opacity 1s ease-in-out; pointer-events: none; display: none;
-        }
-        .tela.ativa { opacity: 1; pointer-events: auto; display: block; }
-        .tela-boas-vindas.ativa { display: flex; }
-        .tela-aniversario.ativa { display: flex; }
-
-        /* --- AGENDAMENTOS --- */
-        #lista { height: 70vh; overflow: hidden; position: relative; }
-        .container-scroll { animation: rolagemVertical 45s linear infinite; }
-        .evento { background: rgba(255,255,255,0.1); padding: 20px; margin-bottom: 15px; border-radius: 10px; }
-        .titulo { font-size: 28px; font-weight: bold; }
-        .horario { font-size: 22px; color: #00ffcc; }
-        .descricao-evento { font-size: 18px; color: #ccc; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; line-height: 1.3; }
-
-        /* --- PREVISÃO DO TEMPO --- */
-        .container-previsao { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
-        .header-previsao { 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(0,0,0,0.5); padding: 20px; border-radius: 20px; 
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-        }
-        .temp-principal { font-size: 90px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
-        .descricao-temp { font-size: 30px; font-weight: normal; color: #ddd; text-transform: capitalize; }
-        .detalhes-clima { display: flex; gap: 40px; text-align: center; }
-        .detalhe-valor { font-weight: bold; color: white; font-size: 28px; }
-        .grafico-temp { 
-            background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; 
-            height: 150px; display: flex; justify-content: space-around; 
-            align-items: flex-end; backdrop-filter: blur(10px); margin-top: 5px;
-        }
-        .barra-hora { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
-        .barra { width: 40px; background: #00ffcc; border-radius: 10px 10px 0 0; transition: height 0.5s; }
-        .barra-temp { font-size: 18px; font-weight: bold; }
-        .barra-label { font-size: 16px; color: #ddd; }
-
-        /* --- AVISOS E DICAS --- */
-        #telaAvisos { padding-top: 380px; } 
-        .aviso { background: #ffcc00; color: black; padding: 30px; border-radius: 12px; font-size: 60px; font-weight: bold; }
-        #conteudoDicas { display: flex; justify-content: center; align-items: center; height: 100%; }
-        .dica-item {
-            background: rgba(0, 128, 255, 0.15); padding: 60px; border-radius: 25px; 
-            font-size: 48px; line-height: 1.4; width: 90%; text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3); display: none; animation: entradaLogo 0.8s ease-in-out;
-        }
-        .dica-item.ativa { display: block; }
-        .dica-item strong { font-size: 60px; color: #00ffcc; display: block; margin-bottom: 25px; text-transform: uppercase; }
-
-        /* --- MIDIA E ANIVERSARIOS --- */
-        #slideshow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
-        .slide.ativo { opacity: 1; }
-
-        /* --- TELA ANIVERSÁRIO --- */
-        .tela-aniversario { 
-            background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-start !important; 
-            align-items: center; 
-            position: relative; 
-            padding: 20px 0 0 0 !important; 
-        }
-        .tela-aniversario h1 {
-            font-size: 90px; 
-            z-index: 2; 
-            margin: 0;
-            width: 100%;
-            text-align: center;
-        }
-        .nome-aniversariante { font-size: 55px; font-weight: bold; color: #fff; animation: piscarNome 1s infinite; margin-top: 10px; }
-        .foto-aniversariante { width: 350px; height: 350px; border-radius: 50%; border: 10px solid white; position: relative; z-index: 2; margin-top: 5px; object-fit: cover; }
-        #confettiCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-
-        .oculto { opacity: 0 !important; pointer-events: none; }
-
-        /* --- TELA VERMELHA (PAUSA) --- */
-        #relOpcional { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(200, 0, 0, 0.95); display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 99999; 
-            animation: piscar 1s infinite alternate ease-in-out; 
-        }
-        #relOpcionalTexto { font-size: 100px; font-weight: bold; color: white; margin-bottom: 20px; text-shadow: 4px 4px 10px black; }
-        #relOpcionalConteudo { font-size: 180px; font-weight: bold; color: white; }
-    </style>
-</head>
-
-<body>
-    <div id="relOpcional" class="oculto">
-        <div id="relOpcionalTexto">PAUSA FINALIZADA</div>
-        <div id="relOpcionalConteudo"></div>
-        <audio id="alarmeAudio" preload="auto"><source src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3" type="audio/mpeg"></audio>
-        <audio id="musicaAudio" preload="auto"><source src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/Audio-pausa-finalizada.mp3" type="audio/mpeg"></audio>
-    </div>
-
-    <div id="topoEsquerdo">
-        <img src="https://i.ibb.co/Wvvft9tN/C-pia-de-Logo-escola.png" id="logoEscola">
-        <div id="nomeEscola">EEB FRANCISCO MANFROI</div>
-    </div>
-    <div id="dataHora"></div>
-    <div id="climaBox"><div id="clima">Carregando...</div></div>
-
-    <div id="telaBoasVindas" class="tela tela-boas-vindas ativa">
-        <div class="boas-vindas-texto">Seja muito bem-vindo à</div>
-        <img src="https://i.ibb.co/Wvvft9tN/C-pia-de-Logo-escola.png" class="boas-vindas-logo">
-    </div>
-
-    <div id="telaAgenda" class="tela">
-        <h1>AGENDAMENTOS DE HOJE</h1>
-        <div id="lista"><div class="container-scroll" id="containerScroll"></div></div>
-    </div>
-
-    <div id="telaAvisos" class="tela"><h1>AVISOS IMPORTANTES</h1><div id="avisos"></div></div>
-    <div id="telaDicas" class="tela"><h1>DICAS EDUCACIONAIS</h1><div id="conteudoDicas"></div></div>
-    <div id="telaPrevisao" class="tela"><h1>Previsão do tempo para amanhã em Lages - SC</h1><div class="container-previsao" id="previsaoBox"></div></div>
-    <div id="telaMidia" class="tela"><div id="slideshow"></div></div>
+    /* === BARRA SUPERIOR === */
+    #topBar, #climaBadge { opacity: 0; transition: opacity 0.8s; z-index: 10; }
+    .visivel { opacity: 1 !important; }
     
-    <div id="telaAniversario" class="tela tela-aniversario">
-        <canvas id="confettiCanvas"></canvas>
-        <div style="font-size: 100px; z-index: 2; margin-bottom: 0px;">🎂</div>
-        <h1>FELIZ ANIVERSÁRIO!</h1>
-        <div id="listaAniversariantes" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; z-index: 2; margin-top: 10px;"></div>
+    #topBar {
+      position: absolute; top: 0; left: 0; right: 0; display: flex;
+      align-items: center; justify-content: space-between; padding: 40px 60px;
+      background: linear-gradient(180deg, rgba(6,13,26,0.9) 0%, transparent 100%);
+    }
+
+    .relogio-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    #hora { font-size: 64px; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+    #data { font-size: 28px; font-weight: 600; opacity: 0.8; text-transform: capitalize; margin-top: 10px; }
+
+    #climaBadge {
+      position: absolute; top: 260px; right: 60px;
+      background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 25px;
+      display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(15px);
+    }
+    #climaIcone { width: 75px; filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4)); }
+    #climaInfo { display: flex; align-items: center; gap: 15px; }
+    .divisor-clima { width: 2px; height: 40px; background: rgba(255,255,255,0.3); }
+    #clima { font-weight: 900; font-size: 38px; }
+    #climaDesc { font-size: 16px; text-transform: uppercase; opacity: 0.9; font-weight: 700; letter-spacing: 1px; }
+
+    /* === CABEÇALHOS === */
+    .section-header { margin: 320px 60px 40px; display: flex; align-items: center; gap: 20px; }
+    .bar { width: 8px; height: 45px; background: #ffffff; border-radius: 4px; }
+    h1 { font-size: 40px; text-transform: uppercase; font-weight: 900; color: #ffffff; letter-spacing: 2px; }
+
+    /* === CONTEÚDOS COMUNS === */
+    #containerScroll, #containerNoticias { padding: 0 60px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; transition: opacity 0.8s ease-in-out; }
+    
+    .event-card-bento, .news-card-bento { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 35px; padding: 25px; min-height: 130px; backdrop-filter: blur(20px); display: flex; flex-direction: column; }
+    .event-card-bento .badge-hora, .news-card-bento .badge-fonte { display: inline-block; background: #ffb347; color: #000; padding: 8px 18px; border-radius: 12px; font-weight: 900; font-size: 22px; margin-bottom: 15px; width: fit-content; }
+    .news-card-bento .badge-fonte { background: #a2d2ff; }
+    .event-card-bento h3, .news-card-bento h3 { font-size: 28px; font-weight: 900; color: #ffffff; text-transform: uppercase; line-height: 1.2; margin-bottom: 10px; }
+    .event-card-bento .local, .news-card-bento .resumo { font-size: 20px; color: #ffb347; font-weight: 700; white-space: pre-line; opacity: 0.9; }
+    
+    /* ESTILO ESPECÍFICO PARA NOTÍCIAS COM IMAGEM */
+    .news-content-wrapper { display: flex; gap: 20px; }
+    .news-image { width: 220px; height: 160px; border-radius: 20px; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); }
+    .news-card-bento .resumo { color: #ffffff; font-weight: 400; font-size: 18px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .aviso-card { background: #ffcc00; border-radius: 25px; padding: 40px; margin: 0 60px 30px 60px; display: flex; align-items: center; gap: 40px; border: 5px solid #ffffff; animation: pulseAviso 2s infinite; color: #000; }
+    .aviso-icon { font-size: 80px; }
+    .aviso-card h3 { font-weight: 900; font-size: 42px; color: #000 !important; }
+    .aviso-card p { font-weight: 700; font-size: 28px; color: #222222; }
+
+    .glass-card { background: rgba(255,255,255,0.05); border-radius: 40px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); }
+
+    /* === TELA BOAS VINDAS === */
+    #telaBoasVindas { justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at center, #1a0d45 0%, #060d1f 100%); overflow: hidden; }
+    #telaBoasVindas::before { content: ''; position: absolute; inset: -50%; background: radial-gradient(circle at center, rgba(45, 10, 92, 0.4) 0%, transparent 60%); animation: aurora 20s linear infinite; filter: blur(60px); opacity: 0.6; z-index: 1; }
+    .bv-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+    .bv-saudacao { font-size: 7vh; font-weight: 900; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 30px rgba(255,255,255,0.3); animation: bvFadeInDown 1.5s ease-out forwards; opacity: 0; }
+    .bv-logo-wrapper { position: relative; animation: bvScaleIn 1.8s ease-out forwards; opacity: 0; }
+    .bv-logo { height: 55vh; filter: drop-shadow(0 0 40px rgba(255,255,255,0.2)); animation: bvLogoPulse 8s ease-in-out infinite; }
+    .bv-escola-nome { font-size: 4vh; font-weight: 900; text-transform: uppercase; color: #ffb347; text-shadow: 0 0 20px rgba(255,179,71,0.4); animation: bvFadeInUp 1.5s ease-out 0.5s forwards; opacity: 0; }
+
+    /* === TELA PREVISÃO === */
+    .clima-container { padding: 0 60px; flex: 1; display: flex; flex-direction: column; gap: 40px; justify-content: center; }
+    .clima-hero { display: flex; align-items: center; justify-content: space-around; background: rgba(255,255,255,0.05); padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); }
+    .temp-main { font-size: 160px; font-weight: 900; line-height: 1; letter-spacing: -5px; }
+    .clima-desc-hero { font-size: 30px; text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 2px; }
+    .clima-detalhes-grid { display: flex; gap: 60px; }
+    .detalhe-item { text-align: center; }
+    .detalhe-label { font-size: 14px; opacity: 0.5; text-transform: uppercase; margin-bottom: 5px; }
+    .detalhe-valor { font-size: 28px; font-weight: 900; }
+    .previsao-hourly { display: flex; gap: 20px; justify-content: space-between; }
+    .hour-card { background: rgba(255,255,255,0.08); padding: 25px 15px; border-radius: 25px; flex: 1; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+    .hour-temp { font-size: 32px; font-weight: 900; display: block; margin: 10px 0; color: #ffb347; }
+
+    /* === TELA ANIVERSÁRIO === */
+    #telaAniversario { background: radial-gradient(circle at center, #1a0438 0%, #060d1f 100%); justify-content: flex-start; align-items: center; text-align: center; padding-top: 40px; }
+    .aniv-title { font-family: 'Dancing Script', cursive; font-size: 110px; color: #ffb347; text-shadow: 0 0 30px rgba(255,179,71,0.6); margin-bottom: 0px; }
+    .aniv-card { background: rgba(255, 255, 255, 0.07); border: 2px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); padding: 60px 40px; border-radius: 60px; text-align: center; width: 600px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); animation: cardFloat 3s ease-in-out infinite; }
+    .aniv-photo-wrapper { position: relative; width: 320px; height: 320px; margin: 0 auto 40px; }
+    .aniv-photo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 12px solid #ffb347; box-shadow: 0 0 40px rgba(255,179,71,0.5); }
+    .aniv-name { font-size: 38px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 3px; line-height: 1.1; }
+    
+    /* === TELA PAUSA (PISCANTE) === */
+    #telaPausa { background: #b30000; justify-content: center; align-items: center; text-align: center; z-index: 10000; }
+    .pausa-ativa { animation: blinkRed 1s infinite alternate; }
+    .pausa-texto { font-size: 120px; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; color: white; text-shadow: 0 0 50px rgba(0,0,0,0.5); }
+    .pausa-relogio { font-size: 180px; font-weight: 900; margin-top: 40px; font-family: monospace; }
+
+    /* === ANIMAÇÕES === */
+    @keyframes blinkRed { 0% { background: #b30000; } 100% { background: #ff0000; } }
+    @keyframes aurora { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes bvLogoPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+    @keyframes bvFadeInDown { 0% { opacity: 0; transform: translateY(-50px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes bvFadeInUp { 0% { opacity: 0; transform: translateY(50px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes bvScaleIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes pulseAviso { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+    @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+    @keyframes confeteFall { 0% { transform: translateY(-15vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(115vh) rotate(360deg); opacity: 0.7; } }
+    .confete { position: absolute; border-radius: 50%; animation: confeteFall 5s linear infinite; }
+    #slideshow { width: 100%; height: 100%; background-size: cover; background-repeat: no-repeat; background-position: center; background-color: #000; transition: opacity 0.8s ease-in-out; }
+  </style>
+</head>
+<body>
+
+<audio id="audioInicio" src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3"></audio>
+<audio id="audioFim" src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/Audio-pausa-finalizada.mp3"></audio>
+
+<div id="topBar">
+  <div style="display:flex; align-items:center; gap:30px;"> <img src="https://i.ibb.co/Wvvft9tN/C-pia-de-Logo-escola.png" height="220">
+    <div>
+      <div style="font-size:42px; font-weight:900;">EEB FRANCISCO MANFROI</div>
+      <div style="font-size:18px; opacity:0.7; font-weight: 600;">PAINEL DIGITAL INFORMATIVO</div>
     </div>
+  </div>
+  <div class="relogio-container">
+    <div id="hora">00:00:00</div>
+    <div id="data">---</div>
+  </div>
+</div>
+
+<div id="climaBadge">
+  <img id="climaIcone" src="" width="60">
+  <div id="climaInfo"><div id="clima">--°C</div><div class="divisor-clima"></div><div id="climaDesc">--</div></div>
+</div>
+
+<div id="telaPausa" class="tela">
+  <div class="pausa-texto">PAUSA FINALIZADA!</div>
+  <div id="pausaRelogio" class="pausa-relogio">00:00:00</div>
+</div>
+
+<div id="telaBoasVindas" class="tela ativa">
+    <div class="bv-content">
+        <div class="bv-saudacao">SEJA MUITO BEM-VINDO À</div>
+        <div class="bv-logo-wrapper"><img src="https://i.ibb.co/Wvvft9tN/C-pia-de-Logo-escola.png" class="bv-logo"></div>
+        <div class="bv-escola-nome">EEB FRANCISCO MANFROI</div>
+    </div>
+</div>
+
+<div id="telaAgenda" class="tela">
+  <div class="section-header"><div class="bar"></div><h1>Agendamentos de Hoje</h1></div>
+  <div id="containerScroll"></div>
+</div>
+
+<div id="telaAniversario" class="tela">
+    <div id="confettiContainer" style="position: absolute; inset: 0; pointer-events: none; z-index: 1;"></div>
+    <div class="aniv-title">Feliz Aniversário!</div>
+    <div id="listaAniversariantes" style="display: flex; justify-content: center; gap: 60px; padding: 20px; position: relative; z-index: 10;"></div>
+</div>
+
+<div id="telaAvisos" class="tela">
+  <div class="section-header"><div class="bar"></div><h1>Avisos Importantes</h1></div>
+  <div id="avisos" style="padding:0 50px;"></div>
+</div>
+
+<div id="telaDicas" class="tela">
+  <div class="section-header"><div class="bar"></div><h1>Dicas Educacionais</h1></div>
+  <div id="conteudoDicas" class="glass-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0 50px 50px 50px; padding: 60px; text-align: center;"></div>
+</div>
+
+<div id="telaPrevisao" class="tela">
+  <div class="section-header"><div class="bar"></div><h1>Previsão para Amanhã</h1></div>
+  <div id="previsaoBox" class="clima-container"></div>
+</div>
+
+<div id="telaMidia" class="tela"><div id="slideshow"></div></div>
+
+<div id="telaNoticias" class="tela">
+  <div class="section-header"><div class="bar"></div><h1>Notícias de Santa Catarina</h1></div>
+  <div id="containerNoticias"></div>
+</div>
 
 <script>
-const BASE_URL = "https://script.google.com/macros/s/AKfycbz6lbu-k04H2U0Z_DHdSeswuodBmEBsaYgOIqDxKA89kiTyVRw_l8J685UVl3M7Hnyv/exec";
-const tempoDicaIndividual = 10000;
-const tempoImagem = 5000;
-const tempoSlideshowTotal = 20000;
-const tempoTelasNormais = 10000;
+const BASE_URL = "https://script.google.com/macros/s/AKfycbzH8YkO4YOV-xx76siueEcdWYmy5BKT9TJSqPQvdRLHZjKZ9tlLMfHWNNJa5pDfYRqG/exec";
+const RSS_URL = "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/dynamo/sc/santa-catarina/rss2.xml";
+const SLIDES = ["https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/pascoa-manfroi.jpg", "https://i.postimg.cc/9FvYYJw7/06.jpg"];
 
-let listaDicas = [];
-let dicaAtualIdx = 0;
-let intervaloDicasInterno, slideTimeout, intervaloTelas;
-let listaAniversariantesAtual = [];
-let qtdEventosHoje = 0; 
-let telaAtual = 0;
-let telas = ["telaBoasVindas", "telaAgenda", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaAniversario"];
+// NOVA ORDEM DAS TELAS CONFORME SOLICITADO
+const TELAS = ["telaBoasVindas", "telaAgenda", "telaAniversario", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaNoticias"];
 
-const slidesContent = [
-  { src: "https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/pascoa-manfroi.jpg" },
-  { src: "https://i.postimg.cc/9FvYYJw7/06.jpg" }
-];
+let telaAtual = 0, listaAgenda = [], agendaPagina = 0, listaDicas = [], dicaIdx = 0, listaAniv = [], slideIdx = 0, listaNoticias = [], noticiaPagina = 0;
+let intervaloDicas, intervaloAgenda, intervaloSlides, intervaloNoticias, timeoutTroca;
+let emPausaTotal = false;
 
-function atualizarTudo() { carregarClima(); carregarPrevisaoAmanha(); carregarEventos(); carregarAvisos(); carregarDicas(); buscarAniversariantes(); }
+const HORARIOS_PAUSA = [{h: 9, m: 30}, {h: 10, m: 0}, {h: 15, m: 15}, {h: 15, m: 30}, {h: 16, m: 00}, {h: 20, m: 0}];
 
-function carregarEventos(){ 
-    fetch(BASE_URL).then(r=>r.json()).then(data=>{ 
-        let html=""; const hoje=new Date().toDateString(); 
-        let contador = 0;
-        for(let i=1;i<data.length;i++){ 
-            if(new Date(data[i][1]).toDateString() === hoje) { 
-                contador++;
-                html+=`<div class="evento">
-                    <div class="titulo">${data[i][0]}</div>
-                    <div class="horario">${new Date(data[i][1]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} - ${new Date(data[i][2]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
-                    <div class="descricao-evento">${(data[i][3]||"").replace(/\n/g,'<br>')}</div>
-                </div>`; 
-            } 
-        } 
-        qtdEventosHoje = contador;
-        document.getElementById("containerScroll").innerHTML=(html||"<div class='evento'>Nenhum evento agendado para hoje</div>") + (contador > 0 ? html : ""); 
-    }); 
+function checarPausa() {
+    const agora = new Date();
+    const h = agora.getHours(), m = agora.getMinutes(), s = agora.getSeconds();
+    document.getElementById("pausaRelogio").innerText = agora.toLocaleTimeString('pt-BR');
+    const éHoraDePausa = HORARIOS_PAUSA.some(tempo => tempo.h === h && tempo.m === m);
+    if(éHoraDePausa && s === 0 && !emPausaTotal) dispararPausa();
 }
 
-function carregarDicas(){ fetch(BASE_URL + "?tipo=dicas").then(r => r.json()).then(data => { listaDicas = data.slice(1); renderizarDica(); }); }
-function renderizarDica() { const container = document.getElementById("conteudoDicas"); if (listaDicas.length === 0) { container.innerHTML = "<div class='dica-item ativa'>Nenhuma dica disponível</div>"; return; } let html = ""; listaDicas.forEach((d, idx) => { html += `<div class="dica-item" id="dica_${idx}"><strong>${d[0]||""}</strong>${d[1]||""}</div>`; }); container.innerHTML = html; }
-function mostrarProximaDica() { document.querySelectorAll('.dica-item').forEach(el => el.classList.remove('ativa')); const elemento = document.getElementById(`dica_${dicaAtualIdx}`); if (elemento) elemento.classList.add('ativa'); dicaAtualIdx = (dicaAtualIdx + 1) % listaDicas.length; }
+function dispararPausa() {
+    emPausaTotal = true;
+    clearTimeout(timeoutTroca);
+    clearInterval(intervaloDicas); clearInterval(intervaloAgenda); clearInterval(intervaloSlides); clearInterval(intervaloNoticias);
+    
+    const telaP = document.getElementById("telaPausa");
+    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+    telaP.classList.add("ativa", "pausa-ativa");
+    
+    document.getElementById("topBar").classList.remove("visivel");
+    document.getElementById("climaBadge").classList.remove("visivel");
 
-function carregarPrevisaoAmanha(){ 
-    fetch(BASE_URL + "?tipo=previsaoAmanha").then(r=>r.json()).then(data=>{ 
-        let html = `<div class="header-previsao"><div class="temp-principal"><img src="https://openweathermap.org/img/wn/${data.icone}@4x.png" style="height:120px"><div class="temp-e-desc"><div>${data.temperatura}°C</div><div class="descricao-temp">${data.descricao}</div></div></div><div class="detalhes-clima"><div>Máx/Mín<br><span class="detalhe-valor">${data.maxima}°/${data.minima}°</span></div><div>Umidade<br><span class="detalhe-valor">${data.umidade}%</span></div><div>Vento<br><span class="detalhe-valor">${data.vento} km/h</span></div></div></div><div class="grafico-temp" id="graficoContainer"></div>`;
-        document.getElementById("previsaoBox").innerHTML = html;
-        if(data.grafico){ const gc = document.getElementById("graficoContainer"); const temps = data.grafico.map(p => p.temp), minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT; data.grafico.forEach(p => { const alt = range === 0 ? 50 : ((p.temp - minT) / range) * 80 + 20; gc.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span class="barra-label">${p.hora}h</span></div>`; }); }
-    }); 
+    const a1 = document.getElementById("audioInicio"), a2 = document.getElementById("audioFim");
+    
+    a1.play().catch(e=>{}); 
+    
+    a1.onended = () => {
+        a2.play().catch(e=>{});
+    };
+
+    setTimeout(() => { 
+        a2.pause();
+        a2.currentTime = 0; 
+        a2.play().catch(e=>{}); 
+    }, 120000);
+
+    setTimeout(() => { 
+        emPausaTotal = false; 
+        telaP.classList.remove("ativa", "pausa-ativa"); 
+        telaAtual = 0; 
+        trocarTela(); 
+    }, 300000);
+}
+
+function gerarConfetes() {
+    const container = document.getElementById("confettiContainer");
+    container.innerHTML = "";
+    const cores = ["#FFD700", "#FFFFFF", "#FF69B4", "#00BFFF", "#ADFF2F", "#FF4500"];
+    for(let i=0; i<60; i++) {
+        const c = document.createElement("div");
+        c.className = "confete";
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.top = "-20px";
+        const size = Math.random() * 10 + 6 + "px";
+        c.style.width = size; c.style.height = size;
+        c.style.backgroundColor = cores[Math.floor(Math.random()*cores.length)];
+        c.style.animationDuration = (Math.random() * 3 + 3) + "s";
+        c.style.animationDelay = (Math.random() * 5) + "s";
+        container.appendChild(c);
+    }
+}
+
+setInterval(() => {
+  const agora = new Date();
+  document.getElementById("hora").textContent = agora.toLocaleTimeString("pt-BR");
+  const dataStr = agora.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById("data").textContent = dataStr.charAt(0).toUpperCase() + dataStr.slice(1);
+  checarPausa();
+}, 1000);
+
+async function carregarDados() {
+  try {
+    const resC = await fetch(BASE_URL + "?tipo=clima");
+    const dC = await resC.json();
+    document.getElementById("clima").textContent = `${Math.round(dC.temperatura)}°C`;
+    document.getElementById("climaDesc").textContent = dC.descricao;
+    document.getElementById("climaIcone").src = `https://openweathermap.org/img/wn/${dC.icone}@2x.png`;
+    const resA = await fetch(BASE_URL); const dA = await resA.json();
+    listaAgenda = []; const hoje = new Date().toDateString();
+    for(let i=1; i<dA.length; i++) if(new Date(dA[i][1]).toDateString() === hoje) listaAgenda.push(dA[i]);
+    renderizarAgenda();
+    
+    // CARREGAR NOTICIAS
+    const resN = await fetch(RSS_URL); 
+    const dN = await resN.json();
+    listaNoticias = dN.items.map(item => {
+        let imgUrl = "https://via.placeholder.com/220x160?text=G1+SC";
+        const match = item.description.match(/<img[^>]+src="([^">]+)"/);
+        if (match) imgUrl = match[1];
+        else if (item.thumbnail) imgUrl = item.thumbnail;
+        else if (item.enclosure && item.enclosure.link) imgUrl = item.enclosure.link;
+        
+        return {
+            title: item.title,
+            description: item.description.replace(/<[^>]*>?/gm, ''), 
+            image: imgUrl
+        };
+    }) || [];
+    renderizarNoticias();
+
+    const resAv = await fetch(BASE_URL + "?tipo=avisos"); const dAv = await resAv.json();
+    let hAv = ""; const hj = new Date().setHours(0,0,0,0);
+    for(let i=1; i<dAv.length; i++) if(hj >= new Date(dAv[i][2]).setHours(0,0,0,0) && hj <= new Date(dAv[i][3]).setHours(0,0,0,0)) hAv += `<div class="aviso-card"><div class="aviso-icon">⚠️</div><div class="card-info"><h3>${dAv[i][0]}</h3><p>${dAv[i][1]}</p></div></div>`;
+    document.getElementById("avisos").innerHTML = hAv || "<h3>Sem avisos.</h3>";
+    const resP = await fetch(BASE_URL + "?tipo=previsaoAmanha"); const dP = await resP.json();
+    let hHr = ""; if(dP.grafico) dP.grafico.forEach(p => { hHr += `<div class="hour-card"><span class="hour-time">${p.hora}h</span><img src="https://openweathermap.org/img/wn/${dP.icone}.png" width="50"><span class="hour-temp">${p.temp}°</span></div>`; });
+    document.getElementById("previsaoBox").innerHTML = `<div class="clima-hero"><div style="text-align:center"><div class="temp-main">${dP.temperatura}°</div><div class="clima-desc-hero">${dP.descricao}</div></div><img src="https://openweathermap.org/img/wn/${dP.icone}@4x.png" style="width:200px; filter: drop-shadow(0 0 30px rgba(255,255,255,0.4));"><div class="clima-detalhes-grid"><div class="detalhe-item"><div class="detalhe-label">Máxima</div><div class="detalhe-valor" style="color:#ffb347">${dP.maxima}°</div></div><div class="detalhe-item"><div class="detalhe-label">Mínima</div><div class="detalhe-valor" style="color:#a2d2ff">${dP.minima}°</div></div><div class="detalhe-item"><div class="detalhe-label">Umidade</div><div class="detalhe-valor">${dP.umidade}%</div></div></div></div><div class="previsao-hourly">${hHr}</div>`;
+    const resD = await fetch(BASE_URL + "?tipo=dicas"); const dD = await resD.json();
+    listaDicas = dD.slice(1); 
+    document.getElementById("conteudoDicas").innerHTML = listaDicas.map((d, i) => `<div class="dica-item" id="dica_${i}" style="font-size: 4.5vh; display: none;"><strong>${d[0]}</strong>${d[1]}</div>`).join('');
+    const resAn = await fetch(BASE_URL + "?tipo=aniversariantes"); 
+    listaAniv = await resAn.json();
+    document.getElementById("listaAniversariantes").innerHTML = listaAniv.map(p => `<div class="aniv-card"><div class="aniv-photo-wrapper"><img src="${p.foto}" class="aniv-photo"></div><div class="aniv-name">${p.nome}</div></div>`).join('');
+  } catch(e) {}
+}
+
+function renderizarAgenda() {
+  const container = document.getElementById("containerScroll");
+  const itens = listaAgenda.slice(agendaPagina * 2, (agendaPagina + 1) * 2);
+  container.style.opacity = 0;
+  setTimeout(() => {
+    container.innerHTML = itens.map(item => `<div class="event-card-bento"><div class="badge-hora">${new Date(item[1]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><h3>${item[0]}</h3><div class="local">📍 ${item[3]}</div></div>`).join('');
+    container.style.opacity = 1;
+  }, 400);
+}
+
+function renderizarNoticias() {
+  const container = document.getElementById("containerNoticias");
+  const itens = listaNoticias.slice(noticiaPagina * 2, (noticiaPagina + 1) * 2);
+  container.style.opacity = 0;
+  setTimeout(() => {
+    container.innerHTML = itens.map(item => `
+      <div class="news-card-bento">
+        <div class="badge-fonte">G1 SANTA CATARINA</div>
+        <div class="news-content-wrapper">
+          <img class="news-image" src="${item.image}">
+          <div>
+            <h3>${item.title}</h3>
+            <div class="resumo">${item.description}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    container.style.opacity = 1;
+  }, 400);
 }
 
 function trocarTela() {
-    if (!document.getElementById("relOpcional").classList.contains("oculto")) {
-        if(intervaloTelas) clearInterval(intervaloTelas);
-        if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
-        return;
-    }
+  if (emPausaTotal) return;
+  const id = TELAS[telaAtual];
+  if(id === "telaAniversario" && listaAniv.length === 0) { telaAtual = (telaAtual + 1) % TELAS.length; trocarTela(); return; }
+  
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+  document.getElementById(id).classList.add("ativa");
+  
+  const hide = ["telaBoasVindas", "telaMidia", "telaAniversario"].includes(id);
+  document.getElementById("topBar").classList.toggle("visivel", !hide);
+  document.getElementById("climaBadge").classList.toggle("visivel", !hide);
+  
+  clearInterval(intervaloDicas); clearInterval(intervaloAgenda); clearInterval(intervaloSlides); clearInterval(intervaloNoticias);
+  let tempo = 12000;
+  
+  if(id === "telaBoasVindas") tempo = 5000;
+  
+  if(id === "telaAgenda") {
+    agendaPagina = 0; renderizarAgenda();
+    if(listaAgenda.length > 2) {
+      intervaloAgenda = setInterval(() => { agendaPagina = (agendaPagina + 1) % Math.ceil(listaAgenda.length / 2); renderizarAgenda(); }, 8000);
+      tempo = Math.ceil(listaAgenda.length / 2) * 8000;
+    } else { tempo = 10000; }
+  }
 
-    if(intervaloTelas) clearInterval(intervaloTelas);
-    if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
-    if (telaAtual === 0) { atualizarTudo(); }
-    
-    telas.forEach(id => {
-        const el = document.getElementById(id);
-        el.classList.remove("ativa");
-    });
-    
-    let idAtual = telas[telaAtual];
-    if (idAtual === "telaAniversario" && listaAniversariantesAtual.length === 0) { telaAtual = (telaAtual + 1) % telas.length; trocarTela(); return; }
-    
-    document.getElementById(idAtual).classList.add("ativa");
-    
-    if (idAtual === "telaAniversario") { dispararConfetes(); }
-
-    if (idAtual === "telaDicas") {
-        dicaAtualIdx = 0; mostrarProximaDica();
-        let tempoTotalDicas = Math.max(tempoTelasNormais, listaDicas.length * tempoDicaIndividual);
-        intervaloDicasInterno = setInterval(mostrarProximaDica, tempoDicaIndividual);
-        intervaloTelas = setInterval(trocarTela, tempoTotalDicas);
-    } else if (idAtual === "telaAgenda") {
-        let tempoAgenda = Math.max(15000, qtdEventosHoje * 8000);
-        intervaloTelas = setInterval(trocarTela, tempoAgenda);
-    } else if (idAtual === "telaMidia") {
-        iniciarSlideshow(); intervaloTelas = setInterval(trocarTela, tempoSlideshowTotal);
-    } else {
-        intervaloTelas = setInterval(trocarTela, tempoTelasNormais);
-    }
-    
-    const ocultarFixos = idAtual === "telaAniversario" || idAtual === "telaMidia" || idAtual === "telaBoasVindas";
-    document.getElementById("topoEsquerdo").classList.toggle("oculto", ocultarFixos);
-    document.getElementById("climaBox").classList.toggle("oculto", ocultarFixos);
-    document.getElementById("dataHora").classList.toggle("oculto", ocultarFixos);
-    telaAtual = (telaAtual + 1) % telas.length;
+  if(id === "telaNoticias") {
+    noticiaPagina = 0; renderizarNoticias();
+    if(listaNoticias.length > 2) {
+      intervaloNoticias = setInterval(() => { noticiaPagina = (noticiaPagina + 1) % 3; renderizarNoticias(); }, 10000);
+      tempo = 30000; 
+    } else { tempo = 15000; }
+  }
+  
+  if(id === "telaDicas") {
+      const dF = () => { document.querySelectorAll('.dica-item').forEach(el=>el.style.display='none'); const el=document.getElementById(`dica_${dicaIdx}`); if(el) el.style.display='block'; dicaIdx=(dicaIdx+1)%listaDicas.length; };
+      dF(); intervaloDicas = setInterval(dF, 8000); tempo = listaDicas.length * 8000;
+  }
+  
+  if(id === "telaMidia") {
+      slideIdx = 0;
+      const sF = () => { document.getElementById("slideshow").style.backgroundImage = `url('${SLIDES[slideIdx]}')`; slideIdx++; if(slideIdx >= SLIDES.length) clearInterval(intervaloSlides); };
+      sF(); intervaloSlides = setInterval(sF, 7000); tempo = SLIDES.length * 7000;
+  }
+  
+  if(id === "telaAniversario") { gerarConfetes(); tempo = 15000; }
+  
+  telaAtual = (telaAtual + 1) % TELAS.length;
+  if(telaAtual === 1) carregarDados();
+  timeoutTroca = setTimeout(trocarTela, tempo);
 }
-
-function atualizarDataHora(){ const agora = new Date(); const data = agora.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); document.getElementById("dataHora").innerHTML = data.charAt(0).toUpperCase()+data.slice(1) + "<br>" + agora.toLocaleTimeString('pt-BR'); }
-setInterval(atualizarDataHora,1000);
-
-function carregarClima(){ fetch(BASE_URL + "?tipo=clima").then(r=>r.json()).then(data=>{ document.getElementById("clima").innerHTML = `${data.temperatura}°C <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" style="height:60px; vertical-align:middle;"> ${data.descricao}`; }); }
-function carregarAvisos(){ fetch(BASE_URL + "?tipo=avisos").then(r=>r.json()).then(data=>{ let html="", hoje=new Date(); hoje.setHours(0,0,0,0); for(let i=1;i<data.length;i++){ let ini=new Date(data[i][2]), fim=new Date(data[i][3]); if(hoje>=ini && hoje<=fim) html+=`<div class="aviso"><strong>${data[i][0]}</strong><br>${data[i][1]}</div>`; } document.getElementById("avisos").innerHTML=html || "Sem avisos"; }); }
-function buscarAniversariantes() { fetch(BASE_URL + "?tipo=aniversariantes").then(r => r.json()).then(lista => { listaAniversariantesAtual = lista; const container = document.getElementById("listaAniversariantes"); container.innerHTML = ""; if (lista.length > 0) { lista.forEach(p => { 
-    container.innerHTML += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><div class="nome-aniversariante">${p.nome}</div></div>`; 
-}); } }); }
-function iniciarSlideshow(){ const container = document.getElementById("slideshow"); container.innerHTML = ""; slidesContent.forEach((item, idx) => { let div = document.createElement("div"); div.className = "slide" + (idx === 0 ? " ativo" : ""); div.style.backgroundImage = `url(${item.src})`; container.appendChild(div); }); let sIdx = 0; const slides = document.querySelectorAll(".slide"); if(slideTimeout) clearInterval(slideTimeout); slideTimeout = setInterval(() => { if(slides[sIdx]) slides[sIdx].classList.remove("ativo"); sIdx = (sIdx + 1) % slides.length; if(slides[sIdx]) slides[sIdx].classList.add("ativo"); }, tempoImagem); }
-
-function dispararConfetes() {
-    const canvas = document.getElementById('confettiCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    let particles = [];
-    const colors = ['#f44336','#e91e63','#9c27b0','#673ab7','#3f51b5','#2196f3','#03a9f4','#00bcd4','#009688','#4caf50','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff5722'];
-    for (let i = 0; i < 150; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height - canvas.height,
-            size: Math.random() * 10 + 5,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            speed: Math.random() * 3 + 2,
-            angle: Math.random() * 6.28
-        });
-    }
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size/2, 0, Math.PI * 2);
-            ctx.fill();
-            p.y += p.speed;
-            p.x += Math.sin(p.angle) * 1;
-            if (p.y > canvas.height) p.y = -10;
-        });
-        if (document.getElementById('telaAniversario').classList.contains('ativa')) {
-            requestAnimationFrame(draw);
-        }
-    }
-    draw();
-}
-
-// LÓGICA DE PAUSA COM DOIS ÁUDIOS
-let execucoesMusica = 0;
-const limiteExecucoes = 2; // Quantas vezes a música vai tocar
-const intervaloEntreMusicas = 160000; // Tempo de silêncio (160 segundos)
-
-setInterval(()=>{ 
-    const agora=new Date(), h=agora.getHours(), m=agora.getMinutes(), s=agora.getSeconds(); 
-    const horários = [
-        {h: 9, m: 30}, {h: 10, m: 0}, {h: 15, m: 15}, 
-        {h: 15, m: 30}, {h: 16, m: 0}, {h: 20, m: 0}
-    ];
-    const éHoraDePausa = horários.some(tempo => tempo.h === h && tempo.m === m);
-    
-    if(éHoraDePausa && s === 0){ 
-        // PARADA DE TELAS
-        if(intervaloTelas) clearInterval(intervaloTelas);
-        if(intervaloDicasInterno) clearInterval(intervaloDicasInterno);
-        if(slideTimeout) clearInterval(slideTimeout);
-
-        document.getElementById("relOpcional").classList.remove("oculto"); 
-        
-        const sirene = document.getElementById("alarmeAudio");
-        const musica = document.getElementById("musicaAudio");
-
-        execucoesMusica = 0; // Reseta o contador
-        sirene.volume = 1.0; 
-        sirene.play().catch(e => {}); 
-        
-        // FUNÇÃO PARA TOCAR A MÚSICA COM INTERVALO
-        sirene.onended = function() {
-            tocarMusicaComPausa();
-        };
-
-        function tocarMusicaComPausa() {
-            // Verifica se ainda estamos na tela vermelha e se não excedeu 3 vezes
-            if (!document.getElementById("relOpcional").classList.contains("oculto") && execucoesMusica < limiteExecucoes) {
-                musica.volume = 0.7;
-                musica.play().catch(e => {});
-                execucoesMusica++;
-
-                // Quando a música terminar, espera o intervalo e tenta tocar de novo
-                musica.onended = function() {
-                    if (execucoesMusica < limiteExecucoes) {
-                        setTimeout(tocarMusicaComPausa, intervaloEntreMusicas);
-                    }
-                };
-            }
-        }
-
-        // Finaliza a pausa após 5 minutos
-        setTimeout(()=> { 
-            document.getElementById("relOpcional").classList.add("oculto");
-            sirene.pause();
-            musica.pause();
-            sirene.currentTime = 0;
-            musica.currentTime = 0;
-            sirene.onended = null; // Limpa os eventos
-            musica.onended = null;
-            telaAtual = 0;
-            trocarTela(); 
-        }, 300000); 
-    } 
-    document.getElementById("relOpcionalConteudo").innerText = agora.toLocaleTimeString('pt-BR'); 
-},1000);
 
 document.addEventListener('click', () => {
-    const sirene = document.getElementById("alarmeAudio");
-    const musica = document.getElementById("musicaAudio");
-    sirene.play().then(() => { sirene.pause(); sirene.currentTime = 0; }).catch(()=>{});
-    musica.play().then(() => { musica.pause(); musica.currentTime = 0; }).catch(()=>{});
-}, { once: true });
+    const a1 = document.getElementById("audioInicio");
+    a1.play().then(()=>{a1.pause(); a1.currentTime=0;});
+}, {once: true});
 
-atualizarTudo(); trocarTela();
+carregarDados(); setTimeout(trocarTela, 5000);
 </script>
 </body>
 </html>
