@@ -49,7 +49,7 @@
 
     /* === CABEÇALHOS === */
     .section-header { margin: 320px 60px 40px; display: flex; align-items: center; gap: 20px; }
-    .section-header.descido { margin-top: 400px; } /* Classe aplicada apenas nas telas solicitadas */
+    .section-header.descido { margin-top: 400px; }
     .bar { width: 8px; height: 45px; background: #ffffff; border-radius: 4px; }
     h1 { font-size: 40px; text-transform: uppercase; font-weight: 900; color: #ffffff; letter-spacing: 2px; }
 
@@ -62,7 +62,6 @@
     .event-card-bento h3, .news-card-bento h3 { font-size: 28px; font-weight: 900; color: #ffffff; text-transform: uppercase; line-height: 1.2; margin-bottom: 10px; }
     .event-card-bento .local, .news-card-bento .resumo { font-size: 20px; color: #ffb347; font-weight: 700; white-space: pre-line; opacity: 0.9; }
     
-    /* ESTILO ESPECÍFICO PARA NOTÍCIAS COM IMAGEM */
     .news-content-wrapper { display: flex; gap: 20px; }
     .news-image { width: 220px; height: 160px; border-radius: 20px; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); }
     .news-card-bento .resumo { color: #ffffff; font-weight: 400; font-size: 18px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
@@ -97,14 +96,14 @@
     .hour-temp { font-size: 32px; font-weight: 900; display: block; margin: 10px 0; color: #ffb347; }
 
     /* === TELA ANIVERSÁRIO === */
-    #telaAniversario { background: radial-gradient(circle at center, #1a0438 0%, #060d1f 100%); justify-content: flex-start; align-items: center; text-align: center; padding-top: 40px; }
-    .aniv-title { font-family: 'Dancing Script', cursive; font-size: 110px; color: #ffb347; text-shadow: 0 0 30px rgba(255,179,71,0.6); margin-bottom: 0px; }
+    #telaAniversario { background: radial-gradient(circle at center, #1a0438 0%, #060d1f 100%); justify-content: flex-start; align-items: center; text-align: center; padding-top: 100px; }
+    .aniv-title { font-family: 'Dancing Script', cursive; font-size: 110px; color: #ffb347; text-shadow: 0 0 30px rgba(255,179,71,0.6); margin-bottom: 20px; }
     .aniv-card { background: rgba(255, 255, 255, 0.07); border: 2px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); padding: 60px 40px; border-radius: 60px; text-align: center; width: 600px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); animation: cardFloat 3s ease-in-out infinite; }
     .aniv-photo-wrapper { position: relative; width: 320px; height: 320px; margin: 0 auto 40px; }
     .aniv-photo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 12px solid #ffb347; box-shadow: 0 0 40px rgba(255,179,71,0.5); }
     .aniv-name { font-size: 38px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 3px; line-height: 1.1; }
     
-    /* === TELA PAUSA (PISCANTE) === */
+    /* === TELA PAUSA === */
     #telaPausa { background: #b30000; justify-content: center; align-items: center; text-align: center; z-index: 10000; }
     .pausa-ativa { animation: blinkRed 1s infinite alternate; }
     .pausa-texto { font-size: 120px; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; color: white; text-shadow: 0 0 50px rgba(0,0,0,0.5); }
@@ -168,7 +167,7 @@
 <div id="telaAniversario" class="tela">
     <div id="confettiContainer" style="position: absolute; inset: 0; pointer-events: none; z-index: 1;"></div>
     <div class="aniv-title">Feliz Aniversário!</div>
-    <div id="listaAniversariantes" style="display: flex; justify-content: center; gap: 60px; padding: 20px; position: relative; z-index: 10;"></div>
+    <div id="listaAniversariantes" style="display: flex; justify-content: center; gap: 60px; padding: 20px; position: relative; z-index: 10; margin-top: 50px;"></div>
 </div>
 
 <div id="telaAvisos" class="tela">
@@ -189,21 +188,30 @@
 <div id="telaMidia" class="tela"><div id="slideshow"></div></div>
 
 <div id="telaNoticias" class="tela">
-  <div class="section-header descido"><div class="bar"></div><h1>Notícias de Santa Catarina</h1></div>
+  <div class="section-header descido"><div class="bar"></div><h1 id="noticiaTitulo">Notícias de Santa Catarina</h1></div>
   <div id="containerNoticias"></div>
+</div>
+
+<div id="telaCuriosidades" class="tela">
+  <div class="section-header descido"><div class="bar"></div><h1>Você Sabia?</h1></div>
+  <div class="glass-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0 60px 60px 60px; padding: 60px; text-align: center;">
+    <div id="textoCuriosidade" style="font-size: 5vh; font-weight: 700; line-height: 1.4; color: #ffb347;"></div>
+  </div>
 </div>
 
 <script>
 const BASE_URL = "https://script.google.com/macros/s/AKfycbzH8YkO4YOV-xx76siueEcdWYmy5BKT9TJSqPQvdRLHZjKZ9tlLMfHWNNJa5pDfYRqG/exec";
-const RSS_URL = "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/dynamo/sc/santa-catarina/rss2.xml";
+const G1_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/dynamo/sc/santa-catarina/rss2.xml&include_content=true";
+const ND_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://ndmais.com.br/feed/&include_content=true";
+const NA_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://noticianoato.com.br/feed/&include_content=true";
 const SLIDES = ["https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/pascoa-manfroi.jpg", "https://i.postimg.cc/9FvYYJw7/06.jpg"];
 
-// ORDEM DAS TELAS
-const TELAS = ["telaBoasVindas", "telaAgenda", "telaAniversario", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaNoticias"];
+const TELAS = ["telaBoasVindas", "telaAgenda", "telaAniversario", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaNoticias", "telaCuriosidades"];
 
 let telaAtual = 0, listaAgenda = [], agendaPagina = 0, listaDicas = [], dicaIdx = 0, listaAniv = [], slideIdx = 0, listaNoticias = [], noticiaPagina = 0;
 let intervaloDicas, intervaloAgenda, intervaloSlides, intervaloNoticias, timeoutTroca;
 let emPausaTotal = false;
+let fonteNoticiaAtual = "NA"; 
 
 const HORARIOS_PAUSA = [{h: 9, m: 30}, {h: 10, m: 0}, {h: 15, m: 15}, {h: 15, m: 30}, {h: 16, m: 00}, {h: 20, m: 0}];
 
@@ -219,34 +227,16 @@ function dispararPausa() {
     emPausaTotal = true;
     clearTimeout(timeoutTroca);
     clearInterval(intervaloDicas); clearInterval(intervaloAgenda); clearInterval(intervaloSlides); clearInterval(intervaloNoticias);
-    
     const telaP = document.getElementById("telaPausa");
     document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
     telaP.classList.add("ativa", "pausa-ativa");
-    
     document.getElementById("topBar").classList.remove("visivel");
     document.getElementById("climaBadge").classList.remove("visivel");
-
     const a1 = document.getElementById("audioInicio"), a2 = document.getElementById("audioFim");
-    
     a1.play().catch(e=>{}); 
-    
-    a1.onended = () => {
-        a2.play().catch(e=>{});
-    };
-
-    setTimeout(() => { 
-        a2.pause();
-        a2.currentTime = 0; 
-        a2.play().catch(e=>{}); 
-    }, 120000);
-
-    setTimeout(() => { 
-        emPausaTotal = false; 
-        telaP.classList.remove("ativa", "pausa-ativa"); 
-        telaAtual = 0; 
-        trocarTela(); 
-    }, 300000);
+    a1.onended = () => { a2.play().catch(e=>{}); };
+    setTimeout(() => { a2.pause(); a2.currentTime = 0; a2.play().catch(e=>{}); }, 120000);
+    setTimeout(() => { emPausaTotal = false; telaP.classList.remove("ativa", "pausa-ativa"); telaAtual = 0; trocarTela(); }, 300000);
 }
 
 function gerarConfetes() {
@@ -282,81 +272,124 @@ async function carregarDados() {
     document.getElementById("clima").textContent = `${Math.round(dC.temperatura)}°C`;
     document.getElementById("climaDesc").textContent = dC.descricao;
     document.getElementById("climaIcone").src = `https://openweathermap.org/img/wn/${dC.icone}@2x.png`;
-    const resA = await fetch(BASE_URL); const dA = await resA.json();
-    listaAgenda = []; const hoje = new Date().toDateString();
-    for(let i=1; i<dA.length; i++) if(new Date(dA[i][1]).toDateString() === hoje) listaAgenda.push(dA[i]);
-    renderizarAgenda();
     
-    // CARREGAR NOTICIAS
-    const resN = await fetch(RSS_URL); 
-    const dN = await resN.json();
-    listaNoticias = dN.items.map(item => {
-        let imgUrl = "https://via.placeholder.com/220x160?text=G1+SC";
-        const match = item.description.match(/<img[^>]+src="([^">]+)"/);
-        if (match) imgUrl = match[1];
-        else if (item.thumbnail) imgUrl = item.thumbnail;
-        else if (item.enclosure && item.enclosure.link) imgUrl = item.enclosure.link;
-        
-        return {
-            title: item.title,
-            description: item.description.replace(/<[^>]*>?/gm, ''), 
-            image: imgUrl
-        };
-    }) || [];
-    renderizarNoticias();
+    const resA = await fetch(BASE_URL); 
+    const dA = await resA.json();
+    listaAgenda = []; 
+    const hojeStr = new Date().toLocaleDateString('pt-BR');
+    for(let i=1; i<dA.length; i++) {
+        let dataAg = new Date(dA[i][1]).toLocaleDateString('pt-BR');
+        if(dataAg === hojeStr) listaAgenda.push(dA[i]);
+    }
+    if(listaAgenda.length > 0) renderizarAgenda();
+    
+    let urlNoticia, nomeFonte;
+    if (fonteNoticiaAtual === "NA") {
+        urlNoticia = NA_RSS; nomeFonte = "NOTÍCIA NO ATO";
+    } else if (fonteNoticiaAtual === "G1") {
+        urlNoticia = G1_RSS; nomeFonte = "G1 SANTA CATARINA";
+    } else {
+        urlNoticia = ND_RSS; nomeFonte = "ND+ NOTÍCIAS";
+    }
 
-    const resAv = await fetch(BASE_URL + "?tipo=avisos"); const dAv = await resAv.json();
+    const resN = await fetch(urlNoticia); 
+    const dN = await resN.json();
+    
+    // Filtragem de notícias: remove itens que contenham "AO VIVO" ou "assista"
+    const itensFiltrados = (dN.items || []).filter(item => {
+        const titulo = (item.title || "").toUpperCase();
+        return !titulo.includes("AO VIVO") && !titulo.includes("ASSISTA");
+    });
+
+    listaNoticias = itensFiltrados.map(item => {
+        let imgUrl = "https://via.placeholder.com/220x160?text=NOTICIAS+SC";
+        const htmlBusca = item.content || item.description || "";
+        const matchImg = htmlBusca.match(/src="([^">]+)"/);
+
+        if (matchImg) {
+            imgUrl = matchImg[1];
+        } else if (item.enclosure && item.enclosure.link) {
+            imgUrl = item.enclosure.link;
+        } else if (item.thumbnail) {
+            imgUrl = item.thumbnail;
+        }
+
+        return { 
+            title: item.title, 
+            description: (item.description || "").replace(/<[^>]*>?/gm, '').substring(0, 150) + "...", 
+            image: imgUrl, 
+            fonte: nomeFonte 
+        };
+    });
+
+    if (fonteNoticiaAtual === "NA") fonteNoticiaAtual = "G1";
+    else if (fonteNoticiaAtual === "G1") fonteNoticiaAtual = "ND";
+    else fonteNoticiaAtual = "NA";
+
+    if(listaNoticias.length > 0) renderizarNoticias();
+
+    const resAv = await fetch(BASE_URL + "?tipo=avisos"); 
+    const dAv = await resAv.json();
     let hAv = ""; const hj = new Date().setHours(0,0,0,0);
     for(let i=1; i<dAv.length; i++) if(hj >= new Date(dAv[i][2]).setHours(0,0,0,0) && hj <= new Date(dAv[i][3]).setHours(0,0,0,0)) hAv += `<div class="aviso-card"><div class="aviso-icon">⚠️</div><div class="card-info"><h3>${dAv[i][0]}</h3><p>${dAv[i][1]}</p></div></div>`;
-    document.getElementById("avisos").innerHTML = hAv || "<h3>Sem avisos.</h3>";
-    const resP = await fetch(BASE_URL + "?tipo=previsaoAmanha"); const dP = await resP.json();
+    document.getElementById("avisos").innerHTML = hAv || "<h3>Sem avisos para hoje.</h3>";
+    
+    const resP = await fetch(BASE_URL + "?tipo=previsaoAmanha"); 
+    const dP = await resP.json();
     let hHr = ""; if(dP.grafico) dP.grafico.forEach(p => { hHr += `<div class="hour-card"><span class="hour-time">${p.hora}h</span><img src="https://openweathermap.org/img/wn/${dP.icone}.png" width="50"><span class="hour-temp">${p.temp}°</span></div>`; });
     document.getElementById("previsaoBox").innerHTML = `<div class="clima-hero"><div style="text-align:center"><div class="temp-main">${dP.temperatura}°</div><div class="clima-desc-hero">${dP.descricao}</div></div><img src="https://openweathermap.org/img/wn/${dP.icone}@4x.png" style="width:200px; filter: drop-shadow(0 0 30px rgba(255,255,255,0.4));"><div class="clima-detalhes-grid"><div class="detalhe-item"><div class="detalhe-label">Máxima</div><div class="detalhe-valor" style="color:#ffb347">${dP.maxima}°</div></div><div class="detalhe-item"><div class="detalhe-label">Mínima</div><div class="detalhe-valor" style="color:#a2d2ff">${dP.minima}°</div></div><div class="detalhe-item"><div class="detalhe-label">Umidade</div><div class="detalhe-valor">${dP.umidade}%</div></div></div></div><div class="previsao-hourly">${hHr}</div>`;
-    const resD = await fetch(BASE_URL + "?tipo=dicas"); const dD = await resD.json();
+    
+    const resD = await fetch(BASE_URL + "?tipo=dicas"); 
+    const dD = await resD.json();
     listaDicas = dD.slice(1); 
-    document.getElementById("conteudoDicas").innerHTML = listaDicas.map((d, i) => `<div class="dica-item" id="dica_${i}" style="font-size: 4.5vh; display: none;"><strong>${d[0]}</strong>${d[1]}</div>`).join('');
+    document.getElementById("conteudoDicas").innerHTML = listaDicas.map((d, i) => `<div class="dica-item" id="dica_${i}" style="font-size: 4.5vh; display: none;"><strong>${d[0]}</strong><br>${d[1]}</div>`).join('');
+    
     const resAn = await fetch(BASE_URL + "?tipo=aniversariantes"); 
     listaAniv = await resAn.json();
     document.getElementById("listaAniversariantes").innerHTML = listaAniv.map(p => `<div class="aniv-card"><div class="aniv-photo-wrapper"><img src="${p.foto}" class="aniv-photo"></div><div class="aniv-name">${p.nome}</div></div>`).join('');
-  } catch(e) {}
+  } catch(e) { console.log("Erro ao carregar dados", e); }
+}
+
+async function exibirCuriosidade() {
+    const textoEl = document.getElementById("textoCuriosidade");
+    textoEl.style.opacity = 0;
+    try {
+        const res = await fetch("https://uselessfacts.jsph.pl/random.json?language=en");
+        const data = await res.json();
+        const resTrans = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${encodeURIComponent(data.text)}`);
+        const dataTrans = await resTrans.json();
+        setTimeout(() => {
+            textoEl.textContent = dataTrans[0][0][0];
+            textoEl.style.opacity = 1;
+        }, 500);
+    } catch (e) {
+        textoEl.textContent = "Você sabia que o aprendizado constante mantém o cérebro jovem?";
+        textoEl.style.opacity = 1;
+    }
 }
 
 function renderizarAgenda() {
   const container = document.getElementById("containerScroll");
+  if(!container) return;
   const itens = listaAgenda.slice(agendaPagina * 2, (agendaPagina + 1) * 2);
-  container.style.opacity = 0;
-  setTimeout(() => {
-    container.innerHTML = itens.map(item => `<div class="event-card-bento"><div class="badge-hora">${new Date(item[1]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><h3>${item[0]}</h3><div class="local">📍 ${item[3]}</div></div>`).join('');
-    container.style.opacity = 1;
-  }, 400);
+  container.innerHTML = itens.map(item => `<div class="event-card-bento"><div class="badge-hora">${new Date(item[1]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><h3>${item[0]}</h3><div class="local">📍 ${item[3]}</div></div>`).join('');
 }
 
 function renderizarNoticias() {
   const container = document.getElementById("containerNoticias");
+  if(!container || listaNoticias.length === 0) return;
   const itens = listaNoticias.slice(noticiaPagina * 2, (noticiaPagina + 1) * 2);
-  container.style.opacity = 0;
-  setTimeout(() => {
-    container.innerHTML = itens.map(item => `
-      <div class="news-card-bento">
-        <div class="badge-fonte">G1 SANTA CATARINA</div>
-        <div class="news-content-wrapper">
-          <img class="news-image" src="${item.image}">
-          <div>
-            <h3>${item.title}</h3>
-            <div class="resumo">${item.description}</div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-    container.style.opacity = 1;
-  }, 400);
+  container.innerHTML = itens.map(item => `<div class="news-card-bento"><div class="badge-fonte">${item.fonte}</div><div class="news-content-wrapper"><img class="news-image" src="${item.image}"><div><h3>${item.title}</h3><div class="resumo">${item.description}</div></div></div></div>`).join('');
 }
 
 function trocarTela() {
   if (emPausaTotal) return;
   const id = TELAS[telaAtual];
-  if(id === "telaAniversario" && listaAniv.length === 0) { telaAtual = (telaAtual + 1) % TELAS.length; trocarTela(); return; }
   
+  if(id === "telaAgenda" && listaAgenda.length === 0) { telaAtual++; trocarTela(); return; }
+  if(id === "telaAniversario" && listaAniv.length === 0) { telaAtual++; trocarTela(); return; }
+  if(id === "telaNoticias" && listaNoticias.length === 0) { telaAtual++; trocarTela(); return; }
+
   document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
   document.getElementById(id).classList.add("ativa");
   
@@ -366,49 +399,61 @@ function trocarTela() {
   
   clearInterval(intervaloDicas); clearInterval(intervaloAgenda); clearInterval(intervaloSlides); clearInterval(intervaloNoticias);
   let tempo = 12000;
-  
-  if(id === "telaBoasVindas") tempo = 5000;
-  
+
+  if(id === "telaBoasVindas") tempo = 6000;
   if(id === "telaAgenda") {
     agendaPagina = 0; renderizarAgenda();
-    if(listaAgenda.length > 2) {
-      intervaloAgenda = setInterval(() => { agendaPagina = (agendaPagina + 1) % Math.ceil(listaAgenda.length / 2); renderizarAgenda(); }, 8000);
-      tempo = Math.ceil(listaAgenda.length / 2) * 8000;
+    const paginasAgenda = Math.ceil(listaAgenda.length / 2);
+    if(paginasAgenda > 1) {
+      intervaloAgenda = setInterval(() => { 
+          agendaPagina++;
+          if(agendaPagina < paginasAgenda) { renderizarAgenda(); } else { clearInterval(intervaloAgenda); }
+      }, 8000);
+      tempo = paginasAgenda * 8000;
     } else { tempo = 10000; }
   }
-
   if(id === "telaNoticias") {
     noticiaPagina = 0; renderizarNoticias();
-    if(listaNoticias.length > 2) {
-      intervaloNoticias = setInterval(() => { noticiaPagina = (noticiaPagina + 1) % 3; renderizarNoticias(); }, 10000);
-      tempo = 30000; 
-    } else { tempo = 15000; }
+    const totalNotPag = Math.min(3, Math.ceil(listaNoticias.length / 2));
+    if(totalNotPag > 1) {
+        intervaloNoticias = setInterval(() => { 
+            noticiaPagina++;
+            if(noticiaPagina < totalNotPag) { renderizarNoticias(); } else { clearInterval(intervaloNoticias); }
+        }, 11500);
+        tempo = totalNotPag * 11500; 
+    } else { tempo = 12000; }
   }
-  
-  if(id === "telaDicas") {
-      const dF = () => { document.querySelectorAll('.dica-item').forEach(el=>el.style.display='none'); const el=document.getElementById(`dica_${dicaIdx}`); if(el) el.style.display='block'; dicaIdx=(dicaIdx+1)%listaDicas.length; };
-      dF(); intervaloDicas = setInterval(dF, 8000); tempo = listaDicas.length * 8000;
+  if(id === "telaDicas" && listaDicas.length > 0) {
+      dicaIdx = 0;
+      const dF = () => { 
+          document.querySelectorAll('.dica-item').forEach(el=>el.style.display='none'); 
+          if(document.getElementById(`dica_${dicaIdx}`)) document.getElementById(`dica_${dicaIdx}`).style.display='block'; 
+          dicaIdx++;
+          if(dicaIdx >= Math.min(listaDicas.length, 3)) clearInterval(intervaloDicas);
+      };
+      dF(); intervaloDicas = setInterval(dF, 8000); tempo = Math.min(listaDicas.length, 3) * 8000;
   }
-  
   if(id === "telaMidia") {
       slideIdx = 0;
-      const sF = () => { document.getElementById("slideshow").style.backgroundImage = `url('${SLIDES[slideIdx]}')`; slideIdx++; if(slideIdx >= SLIDES.length) clearInterval(intervaloSlides); };
-      sF(); intervaloSlides = setInterval(sF, 7000); tempo = SLIDES.length * 7000;
+      const sF = () => { 
+        document.getElementById("slideshow").style.backgroundImage = `url('${SLIDES[slideIdx]}')`; 
+        slideIdx++; 
+        if(slideIdx >= SLIDES.length) clearInterval(intervaloSlides); 
+      };
+      sF(); 
+      intervaloSlides = setInterval(sF, 6800); 
+      tempo = SLIDES.length * 7000;
   }
-  
   if(id === "telaAniversario") { gerarConfetes(); tempo = 15000; }
+  if(id === "telaCuriosidades") { exibirCuriosidade(); tempo = 18000; }
   
   telaAtual = (telaAtual + 1) % TELAS.length;
-  if(telaAtual === 1) carregarDados();
+  if(telaAtual === 0) carregarDados(); 
   timeoutTroca = setTimeout(trocarTela, tempo);
 }
 
-document.addEventListener('click', () => {
-    const a1 = document.getElementById("audioInicio");
-    a1.play().then(()=>{a1.pause(); a1.currentTime=0;});
-}, {once: true});
-
-carregarDados(); setTimeout(trocarTela, 5000);
+carregarDados();
+setTimeout(trocarTela, 3000);
 </script>
 </body>
 </html>
