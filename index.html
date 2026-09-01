@@ -124,7 +124,7 @@
   </style>
 </head>
 <body>
-  
+
 <audio id="audioInicio" src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3" preload="auto"></audio>
 <audio id="audioFim" src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/Audio-pausa-finalizada.mp3" preload="auto"></audio>
 
@@ -205,14 +205,14 @@ const BASE_URL = "https://script.google.com/macros/s/AKfycbwgqxL6yMh95h3_ungYNPk
 const G1_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/dynamo/sc/santa-catarina/rss2.xml&include_content=true";
 const ND_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://ndmais.com.br/feed/&include_content=true";
 const NA_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://noticianoato.com.br/feed/&include_content=true";
-const SLIDES = ["https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/setembro-amarelo.png", "https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/olimfroi-2026.gif", "https://i.postimg.cc/9FvYYJw7/06.jpg"];
+const SLIDES = ["https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/setembro-amarelo.png", "https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/olimfroi-2026.gif", "https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/olimfroi-2026.gif", "https://i.postimg.cc/9FvYYJw7/06.jpg"];
 
 const TELAS = ["telaBoasVindas", "telaAgenda", "telaAniversario", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaNoticias", "telaCuriosidades"];
 
 let telaAtual = 0, listaAgenda = [], agendaPagina = 0, listaDicas = [], dicaIdx = 0, listaAniv = [], slideIdx = 0, listaNoticias = [], noticiaPagina = 0;
 let intervaloDicas, intervaloAgenda, intervaloSlides, intervaloNoticias, timeoutTroca;
 let emPausaTotal = false;
-let fonteNoticiaAtual = "NA"; 
+let fonteNoticiaAtual = "NA";
 
 const HORARIOS_PAUSA = [{h: 9, m: 30}, {h: 10, m: 0}, {h: 15, m: 15}, {h: 15, m: 30}, {h: 16, m: 00}, {h: 20, m: 00}];
 
@@ -486,11 +486,10 @@ function inicializarAudio() {
     });
 }
 
-// INICIALIZAÇÃO
-carregarDados().finally(() => {
-    inicializarAudio();
-    setTimeout(trocarTela, 3000);
-});
+// INICIALIZAÇÃO ISOLADA E SEGURA
+carregarDados();
+inicializarAudio();
+setTimeout(trocarTela, 3000);
 </script>
 </body>
 </html>
