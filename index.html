@@ -124,7 +124,7 @@
   </style>
 </head>
 <body>
-
+  
 <audio id="audioInicio" src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3" preload="auto"></audio>
 <audio id="audioFim" src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/Audio-pausa-finalizada.mp3" preload="auto"></audio>
 
@@ -201,11 +201,11 @@
 
 <script>
 // === CONFIGURAÇÕES E VARIAVEIS ===
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwgqxL6yMh95h3_ungYNPkx_4jXho6peRuElOLWEEFj_VuZnmxSUbHdcn-tEyvCEqem/exec";
+const BASE_URL = "https://script.google.com/macros/s/AKfycbzH8YkO4YOV-xx76siueEcdWYmy5BKT9TJSqPQvdRLHZjKZ9tlLMfHWNNJa5pDfYRqG/exec";
 const G1_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/dynamo/sc/santa-catarina/rss2.xml&include_content=true";
 const ND_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://ndmais.com.br/feed/&include_content=true";
 const NA_RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://noticianoato.com.br/feed/&include_content=true";
-const SLIDES = ["https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/setembro-amarelo.png", "https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/olimfroi-2026.gif", "https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/olimfroi-2026.gif", "https://i.postimg.cc/9FvYYJw7/06.jpg"];
+const SLIDES = ["https://raw.githubusercontent.com/infofranciscomanfroi/fotosslideshow/refs/heads/main/dia-nac-da-lingua-portuguesa.jpg", "https://i.postimg.cc/9FvYYJw7/06.jpg"];
 
 const TELAS = ["telaBoasVindas", "telaAgenda", "telaAniversario", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaNoticias", "telaCuriosidades"];
 
@@ -213,8 +213,10 @@ let telaAtual = 0, listaAgenda = [], agendaPagina = 0, listaDicas = [], dicaIdx 
 let intervaloDicas, intervaloAgenda, intervaloSlides, intervaloNoticias, timeoutTroca;
 let emPausaTotal = false;
 let fonteNoticiaAtual = "NA";
+let ultimoHeartbeatTela = Date.now();
 
 const HORARIOS_PAUSA = [{h: 9, m: 30}, {h: 10, m: 0}, {h: 15, m: 15}, {h: 15, m: 30}, {h: 16, m: 00}, {h: 20, m: 00}];
+const HORA_REINICIO_DIARIO = 4; // Madrugada, fora do horário de uso do painel
 
 // === SISTEMA DE RELÓGIO E REFRESH DE MEMÓRIA (SOLUÇÃO 3) ===
 setInterval(() => {
@@ -233,6 +235,24 @@ setInterval(() => {
       listaAgenda = [];
       listaNoticias = [];
       carregarDados();
+  }
+
+  // REINÍCIO COMPLETO DIÁRIO (SOLUÇÃO 4)
+  // Um recarregamento real da página (fora do horário de uso) libera memória que a
+  // limpeza via JavaScript não consegue liberar (cache de imagens, listeners acumulados, etc).
+  if (h === HORA_REINICIO_DIARIO && m === 0 && s === 0) {
+      console.log("Reinício diário programado para liberar memória do navegador da TV.");
+      location.reload();
+      return;
+  }
+
+  // VIGIA ANTI-CONGELAMENTO (SOLUÇÃO 4)
+  // Se a troca de telas parar de avançar por mais de 90s, algo travou o loop principal:
+  // recarrega a página para o painel se recuperar sozinho, sem intervenção manual.
+  if (!emPausaTotal && Date.now() - ultimoHeartbeatTela > 90000) {
+      console.warn("Painel parado há mais de 90s sem trocar de tela. Recarregando para recuperar.");
+      location.reload();
+      return;
   }
 
   checarPausa();
@@ -274,11 +294,18 @@ function dispararPausa() {
     }, 300000);
 }
 
+// === FETCH COM TIMEOUT (evita que uma requisição travada fique pendurada acumulando memória) ===
+function fetchComTimeout(url, ms = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
 // === CARREGAMENTO DE DADOS COM RESILIÊNCIA (TRY/CATCH) ===
 async function carregarDados() {
   try {
     // CLIMA
-    const resC = await fetch(BASE_URL + "?tipo=clima").catch(() => null);
+    const resC = await fetchComTimeout(BASE_URL + "?tipo=clima").catch(() => null);
     if (resC) {
         const dC = await resC.json();
         document.getElementById("clima").textContent = `${Math.round(dC.temperatura)}°C`;
@@ -287,7 +314,7 @@ async function carregarDados() {
     }
     
     // AGENDA
-    const resA = await fetch(BASE_URL).catch(() => null); 
+    const resA = await fetchComTimeout(BASE_URL).catch(() => null); 
     if (resA) {
         const dA = await resA.json();
         listaAgenda = []; 
@@ -305,7 +332,7 @@ async function carregarDados() {
     else if (fonteNoticiaAtual === "G1") { urlNoticia = G1_RSS; nomeFonte = "G1 SANTA CATARINA"; } 
     else { urlNoticia = ND_RSS; nomeFonte = "ND+ NOTÍCIAS"; }
 
-    const resN = await fetch(urlNoticia).catch(() => null); 
+    const resN = await fetchComTimeout(urlNoticia).catch(() => null); 
     if (resN) {
         const dN = await resN.json();
         const itensFiltrados = (dN.items || []).filter(item => {
@@ -327,7 +354,7 @@ async function carregarDados() {
     }
 
     // AVISOS
-    const resAv = await fetch(BASE_URL + "?tipo=avisos").catch(() => null); 
+    const resAv = await fetchComTimeout(BASE_URL + "?tipo=avisos").catch(() => null); 
     if (resAv) {
         const dAv = await resAv.json();
         let hAv = ""; const hj = new Date().setHours(0,0,0,0);
@@ -336,7 +363,7 @@ async function carregarDados() {
     }
     
     // PREVISÃO
-    const resP = await fetch(BASE_URL + "?tipo=previsaoAmanha").catch(() => null); 
+    const resP = await fetchComTimeout(BASE_URL + "?tipo=previsaoAmanha").catch(() => null); 
     if (resP) {
         const dP = await resP.json();
         let hHr = ""; if(dP.grafico) dP.grafico.forEach(p => { hHr += `<div class="hour-card"><span class="hour-time">${p.hora}h</span><img src="https://openweathermap.org/img/wn/${dP.icone}.png" width="50"><span class="hour-temp">${p.temp}°</span></div>`; });
@@ -344,7 +371,7 @@ async function carregarDados() {
     }
     
     // DICAS
-    const resD = await fetch(BASE_URL + "?tipo=dicas").catch(() => null); 
+    const resD = await fetchComTimeout(BASE_URL + "?tipo=dicas").catch(() => null); 
     if (resD) {
         const dD = await resD.json();
         listaDicas = dD.slice(1); 
@@ -352,7 +379,7 @@ async function carregarDados() {
     }
     
     // ANIVERSARIANTES
-    const resAn = await fetch(BASE_URL + "?tipo=aniversariantes").catch(() => null); 
+    const resAn = await fetchComTimeout(BASE_URL + "?tipo=aniversariantes").catch(() => null); 
     if (resAn) {
         listaAniv = await resAn.json();
         document.getElementById("listaAniversariantes").innerHTML = listaAniv.map(p => `<div class="aniv-card"><div class="aniv-photo-wrapper"><img src="${p.foto}" class="aniv-photo"></div><div class="aniv-name">${p.nome}</div></div>`).join('');
@@ -365,9 +392,9 @@ async function exibirCuriosidade() {
     const textoEl = document.getElementById("textoCuriosidade");
     textoEl.style.opacity = 0;
     try {
-        const res = await fetch("https://uselessfacts.jsph.pl/random.json?language=en");
+        const res = await fetchComTimeout("https://uselessfacts.jsph.pl/random.json?language=en");
         const data = await res.json();
-        const resTrans = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${encodeURIComponent(data.text)}`);
+        const resTrans = await fetchComTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${encodeURIComponent(data.text)}`);
         const dataTrans = await resTrans.json();
         setTimeout(() => { textoEl.textContent = dataTrans[0][0][0]; textoEl.style.opacity = 1; }, 500);
     } catch (e) { textoEl.textContent = "Você sabia que o aprendizado constante mantém o cérebro jovem?"; textoEl.style.opacity = 1; }
@@ -407,26 +434,36 @@ function renderizarNoticias() {
 
 // === LÓGICA DE TRANSIÇÃO DE TELAS ===
 function trocarTela() {
+  ultimoHeartbeatTela = Date.now();
   if (emPausaTotal) return;
-  
-  const id = TELAS[telaAtual];
-  
-  // Pula telas sem conteúdo
-  if(id === "telaAgenda" && listaAgenda.length === 0) { telaAtual = (telaAtual + 1) % TELAS.length; trocarTela(); return; }
-  if(id === "telaAniversario" && listaAniv.length === 0) { telaAtual = (telaAtual + 1) % TELAS.length; trocarTela(); return; }
-  if(id === "telaNoticias" && listaNoticias.length === 0) { telaAtual = (telaAtual + 1) % TELAS.length; trocarTela(); return; }
 
-  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
-  document.getElementById(id).classList.add("ativa");
-  
-  const hide = ["telaBoasVindas", "telaMidia", "telaAniversario"].includes(id);
-  document.getElementById("topBar").classList.toggle("visivel", !hide);
-  document.getElementById("climaBadge").classList.toggle("visivel", !hide);
-  
-  clearInterval(intervaloDicas); clearInterval(intervaloAgenda); clearInterval(intervaloSlides); clearInterval(intervaloNoticias);
   let tempo = 12000;
 
   try {
+    // Pula telas sem conteúdo (sem recursão, para nunca deixar de reagendar o próximo ciclo)
+    let tentativas = 0;
+    while (tentativas < TELAS.length) {
+      const idCandidato = TELAS[telaAtual];
+      const semConteudo =
+        (idCandidato === "telaAgenda" && listaAgenda.length === 0) ||
+        (idCandidato === "telaAniversario" && listaAniv.length === 0) ||
+        (idCandidato === "telaNoticias" && listaNoticias.length === 0);
+      if (!semConteudo) break;
+      telaAtual = (telaAtual + 1) % TELAS.length;
+      tentativas++;
+    }
+
+    const id = TELAS[telaAtual];
+
+    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+    document.getElementById(id).classList.add("ativa");
+
+    const hide = ["telaBoasVindas", "telaMidia", "telaAniversario"].includes(id);
+    document.getElementById("topBar").classList.toggle("visivel", !hide);
+    document.getElementById("climaBadge").classList.toggle("visivel", !hide);
+
+    clearInterval(intervaloDicas); clearInterval(intervaloAgenda); clearInterval(intervaloSlides); clearInterval(intervaloNoticias);
+
     if(id === "telaBoasVindas") tempo = 6000;
     if(id === "telaAgenda") {
       agendaPagina = 0; renderizarAgenda();
@@ -460,11 +497,16 @@ function trocarTela() {
     }
     if(id === "telaAniversario") { gerarConfetes(); tempo = 15000; }
     if(id === "telaCuriosidades") { exibirCuriosidade(); tempo = 18000; }
-  } catch(e) { tempo = 5000; }
-  
-  telaAtual = (telaAtual + 1) % TELAS.length;
-  if(telaAtual === 0) carregarDados(); 
-  timeoutTroca = setTimeout(trocarTela, tempo);
+  } catch(e) {
+    console.warn("Erro ao trocar de tela; avançando para a próxima mesmo assim:", e);
+    tempo = 5000;
+  } finally {
+    // Reagendar o próximo ciclo SEMPRE acontece, mesmo se algo acima falhar.
+    // Antes, um erro nesta função travava o painel na mesma tela para sempre.
+    telaAtual = (telaAtual + 1) % TELAS.length;
+    if(telaAtual === 0) carregarDados();
+    timeoutTroca = setTimeout(trocarTela, tempo);
+  }
 }
 
 // === GESTÃO DE ÁUDIO (PARA ANDROID TV) ===
@@ -486,10 +528,11 @@ function inicializarAudio() {
     });
 }
 
-// INICIALIZAÇÃO ISOLADA E SEGURA
-carregarDados();
-inicializarAudio();
-setTimeout(trocarTela, 3000);
+// INICIALIZAÇÃO
+carregarDados().finally(() => {
+    inicializarAudio();
+    setTimeout(trocarTela, 3000);
+});
 </script>
 </body>
 </html>
